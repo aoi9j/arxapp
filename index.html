@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>ARX — Acceso privado</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #08080d;
+        color: white;
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login {
+        width: 90%;
+        max-width: 420px;
+        text-align: center;
+        padding: 40px 25px;
+    }
+
+    .logo {
+        font-size: 52px;
+        font-weight: 900;
+        letter-spacing: 8px;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: #aaa;
+        margin-bottom: 35px;
+    }
+
+    input {
+        width: 100%;
+        padding: 17px;
+        border-radius: 14px;
+        border: 1px solid #333;
+        background: #15151d;
+        color: white;
+        font-size: 16px;
+        outline: none;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    input:focus {
+        border-color: #ff4fa3;
+    }
+
+    button {
+        width: 100%;
+        padding: 17px;
+        border: 0;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ff4fa3, #9b5cff);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:active {
+        transform: scale(.98);
+    }
+
+    #mensaje {
+        margin-top: 18px;
+        min-height: 22px;
+        color: #ff6b9f;
+    }
+
+    #web {
+        display: none;
+        text-align: center;
+        padding: 40px;
+    }
+
+    #web h1 {
+        font-size: 42px;
+    }
+
+    .cerrar {
+        max-width: 250px;
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login">
+
+    <div class="logo">ARX</div>
+
+    <div class="subtitle">
+        Comunidad privada · Acceso por invitación
+    </div>
+
+    <input
+        id="codigo"
+        type="password"
+        placeholder="Código de acceso"
+        autocomplete="off"
+    >
+
+    <button id="entrar">
+        ENTRAR EN ARX
+    </button>
+
+    <div id="mensaje"></div>
+
+</div>
+
+
+<!-- WEB -->
+<div id="web">
+
+    <h1>Bienvenida a ARX ✦</h1>
+
+    <p id="rol"></p>
+
+    <button class="cerrar" id="cerrar">
+        CERRAR SESIÓN
+    </button>
+
+</div>
+
+
+<script>
+
+const codigo = document.getElementById("codigo");
+const boton = document.getElementById("entrar");
+const mensaje = document.getElementById("mensaje");
+
+const login = document.getElementById("login");
+const web = document.getElementById("web");
+const rol = document.getElementById("rol");
+const cerrar = document.getElementById("cerrar");
+
+
+function entrarARX() {
+
+    const valor = codigo.value.trim();
+
+    if (valor === "ARX-FUNDADORA") {
+
+        login.style.display = "none";
+        web.style.display = "block";
+
+        rol.textContent = "👑 Has entrado como FUNDADORA";
+
+        mensaje.textContent = "";
+
+        return;
+    }
+
+
+    if (valor === "ARX-MEMBER-1702") {
+
+        login.style.display = "none";
+        web.style.display = "block";
+
+        rol.textContent = "✦ Has entrado como MIEMBRO";
+
+        mensaje.textContent = "";
+
+        return;
+    }
+
+
+    mensaje.textContent = "Código incorrecto.";
+}
+
+
+boton.addEventListener("click", entrarARX);
+
+
+codigo.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+        entrarARX();
+    }
+
+});
+
+
+cerrar.addEventListener("click", function() {
+
+    web.style.display = "none";
+    login.style.display = "block";
+
+    codigo.value = "";
+    mensaje.textContent = "";
+
+});
+
+
+</script>
+
+</body>
+</html>
