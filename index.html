@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07070b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARX">
+<link rel="manifest" href="manifest.webmanifest">
 <title>ARX</title>
 <style>
 :root{--bg:#07070b;--card:#111117dd;--line:#ffffff18;--txt:#f8f5fa;--mut:#aaa5b5;--p:#ff4fa3;--v:#8068ff;--c:#63e8ff;--g:#62dfa0}
@@ -64,29 +68,23 @@ button,input{font:inherit}button{cursor:pointer}
 
 <section id="home" class="screen on">
 <div class="hero"><div class="ey">PRIVATE SANCTUARY</div><h1>Tu mundo.<br>Tu refugio.</h1><div class="mut">Descubre personas de tu comunidad, conecta mediante flechazos y convierte momentos en recuerdos coleccionables.</div><button class="btn" onclick="show('discover')">Descubrir personas →</button></div>
-<div class="sec">TU PERFIL</div><div class="card"><div id="homeAvatar" class="avatar"><div class="fallback">✦</div></div><div class="row" style="margin-top:13px"><div><b id="homeName">Aoi · Nivel 18</b><div class="mut">Coleccionista nocturna · ♫ Indie</div></div><span class="status" style="margin-left:auto"><i class="dot"></i> Disponible</span></div><div id="homeInterests" class="tags"></div></div>
-<div class="grid" style="margin-top:11px"><div class="card"><div class="mut">FLECHAZOS</div><div class="stat" id="sentCount">0</div></div><div class="card"><div class="mut">MATCHES</div><div class="stat" id="matchCount">1</div></div></div><div class="card" style="margin-top:11px"><div class="row"><div class="mini">✦</div><div><b>Tu colección ARX</b><div class="mut">3 piezas · 1 legendaria · vitrina 360°</div></div></div><button class="btn ghost" onclick="show('drops')">Abrir Drops y vitrinas →</button></div><div class="sec">TU PROGRESO</div><div class="card"><div class="row"><div><b>Nivel 18 · Coleccionista nocturna</b><div class="mut">1.240 / 1.500 XP</div></div><div class="stat" style="margin-left:auto">18</div></div><div class="bar" style="margin-top:10px"><i></i></div><button class="btn ghost" onclick="show('missions')">🎯 Ver misiones</button></div><div class="sec">HOY EN ARX</div><div class="grid"><div class="card"><b>🔥 ARX NOW</b><div class="mut">23 experiencias ARX activas</div></div><div class="card"><b>✦ DROP</b><div class="mut">Hay un Drop en una zona cercana</div></div></div>
+<div class="sec">TU PERFIL</div><div class="card"><div id="homeAvatar" class="avatar"><div class="fallback">✦</div></div><div class="row" style="margin-top:13px"><div><b id="homeName">Aoi</b><div class="mut">Tu espacio personal ARX</div></div><span class="status" style="margin-left:auto"><i class="dot"></i> Disponible</span></div><div id="homeInterests" class="tags"></div></div>
+<div class="card" style="margin-top:11px"><div class="row"><div class="mini">🎁</div><div><b>Tu colección ARX</b><div class="mut">Aquí aparecerán tus figuras 3D cuando desbloquees un Drop.</div></div></div><button class="btn ghost" onclick="show('drops')">Ir a Drops →</button></div>
 </section>
 
 <section id="discover" class="screen">
-<div class="hero discover-hero"><div class="ey">✦ DESCUBRIR · PRIVACIDAD ARX</div><h1>No busques perfiles.<br>Descubre personas.</h1><div class="mut">Aquí puedes encontrar coincidencias, leer lo que piensa la comunidad y enviar una conexión. El chat permanece cerrado hasta que ambas personas aceptan.</div></div>
-<div class="sec">🎲 EL DESCUBRIMIENTO DE HOY</div>
-<div class="card discovery-card" id="surpriseCard"><div class="mut" id="surpriseIntro">ARX ha encontrado una coincidencia curiosa para ti.</div><button class="btn" onclick="surpriseMe()">✦ Sorpréndeme</button></div>
-<div class="sec">💭 PREGUNTA DEL DÍA</div>
-<div class="card question-card"><div class="ey" id="questionDate">24 HORAS · ARX</div><h2 id="dailyQuestion">Cargando pregunta…</h2><div class="mut">Una sola pregunta para toda la comunidad durante 24 horas.</div><textarea id="dailyAnswer" class="question-input" maxlength="280" placeholder="Escribe tu respuesta…"></textarea><button class="btn" onclick="saveDailyAnswer()">Publicar mi respuesta</button><div id="answerStatus" class="mut" style="margin-top:8px"></div></div>
-<div class="sec">🌙 RESPUESTAS DE ARX</div><div id="dailyAnswers"></div>
-<div class="card" style="margin-top:11px"><div class="row"><div class="mini">🔐</div><div><b>Conexión mutua</b><div class="mut">Puedes descubrir perfiles y mostrar interés, pero nadie puede escribirte desde aquí. El chat solo se abre cuando ambas aceptáis.</div></div></div></div>
+<div class="sec">DESCUBRIR · PRIVACIDAD PRIMERO</div>
+<div class="hero"><div class="ey">🎲 EL DESCUBRIMIENTO DE HOY</div><h1>Algo curioso te espera.</h1><div class="mut">ARX busca una coincidencia a partir de algo que compartís. Puedes descubrir su mundo, pero el chat solo se abre cuando la conexión es mutua.</div><button class="btn" onclick="surpriseMe()">✦ Sorpréndeme</button></div>
+<div id="surpriseResult" class="card hidden" style="margin-top:11px"></div>
+<div class="sec">💭 PREGUNTA DE HOY</div><div class="card"><div id="dailyQuestion" class="name"></div><div class="mut" style="margin-top:8px">Una pregunta para toda la comunidad durante 24 horas.</div><textarea id="dailyAnswer" class="form" style="margin-top:12px;width:100%;min-height:80px;background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:12px;color:#fff" placeholder="Escribe tu respuesta..."></textarea><button class="btn" onclick="saveDailyAnswer()">Publicar respuesta</button></div>
+<div class="sec">RESPUESTAS QUE PODRÍAN INTERESARTE</div><div id="dailyAnswers"></div>
 </section>
 
-<section id="matches" class="screen">
-<div class="hero"><div class="ey">CONEXIONES ARX</div><h1>Personas con las que conectas.</h1><div class="mut">Aquí nacen las conversaciones, los detalles y los planes. Sin flechazos obligatorios.</div></div>
-<div class="sec">TUS CONEXIONES</div>
-<div id="connectionList"><div class="card"><div class="row"><div class="mini">🌙</div><div><b>Vera · 92%</b><div class="mut">Viajes · Indie · Cafés</div></div></div><div class="grid" style="margin-top:10px"><button class="btn" onclick="show('privateChat')">💬 Hablar</button><button class="btn ghost" onclick="openFlowerPicker('Vera')">🌹 Enviar flor</button></div><button class="btn ghost" onclick="openPlan('Vera')">☕ Proponer un plan</button></div></div>
-</section>
+<section id="matches" class="screen"><div class="hero"><div class="ey">CONEXIONES ARX</div><h1>Tus conexiones.</h1><div class="mut">Aquí aparecerán las conexiones que se acepten mutuamente. Hasta entonces, el chat permanece cerrado.</div></div><div class="sec">TUS CONEXIONES</div><div id="connectionList"><div class="notice">Todavía no tienes conexiones mutuas.</div></div></section>
 
 <section id="privateChat" class="screen">
 <div class="sec">CONVERSACIÓN · VERA</div><div class="card"><div class="row"><div class="mini">🌙</div><div><b>Vera</b><div class="status"><i class="dot"></i> En línea</div></div></div><div class="notice" style="margin-top:12px">✦ Esta conversación nace de vuestra conexión ARX.</div></div>
-<div id="messages" class="card chat" style="margin-top:11px"><div class="msg">Hey ✨ ¿café, aventura o plan improvisado?</div><div class="msg me">JAJA, los tres suenan bien 🫶</div></div>
+<div id="messages" class="card chat" style="margin-top:11px"><div class="notice">Cuando tengáis una conexión mutua, aquí aparecerán vuestros mensajes.</div></div>
 <div class="compose"><input id="input" placeholder="Escribe un mensaje…"><button class="send" onclick="send()">➤</button></div>
 <div class="attachments">
 <button class="toolbtn" onclick="pickGif()">GIF</button>
@@ -117,10 +115,13 @@ button,input{font:inherit}button{cursor:pointer}
 </section>
 
 <section id="drops" class="screen">
-<div class="drop-hero"><div class="drop-kicker">ARX DROPS · COLECCIÓN 3D</div><h1>Encuentra. Descubre. Colecciona.</h1><div class="mut">Los Drops no se consiguen con un toque. Las pistas pueden aparecer en ARX, WhatsApp o redes sociales y cada Drop solo entrega una figura 3D coleccionable.</div><div class="drop-actions"><button class="drop-action" onclick="drop('Centro ARX')">✦ Seguir una pista</button><button class="drop-action" onclick="show('map')">⌖ Ver zonas de búsqueda</button></div></div>
-<div class="sec">🧊 MI COLECCIÓN</div><div id="collectionList" class="collection-grid"></div>
-<div class="sec">🕵️ CÓMO ENCONTRAR UN DROP</div><div class="card"><div class="event"><b>1 · Busca la pista</b><div class="mut">Puede aparecer en la comunidad de WhatsApp o en nuestras redes.</div></div><div class="event"><b>2 · Encuentra el código</b><div class="mut">Puede estar escondido en una foto, vídeo, historia, canción o mensaje.</div></div><div class="event"><b>3 · Vuelve a ARX</b><div class="mut">Introduce el código y sigue la última pista.</div></div><div class="event"><b>4 · Consigue la figura</b><div class="mut">Solo entonces se desbloquea la figura 3D y pasa a tu colección.</div></div></div>
-<div class="sec">VITRINA 360°</div><div class="vault"><div class="vault-top"><div><div class="vault-title">Vitrina ARX</div><div class="mut">Tus figuras 3D coleccionables</div></div><span class="vault-badge">COLECCIÓN</span></div><div class="viewer-premium"><div class="big3d">🦋</div></div><div class="vault-controls"><button onclick="toast('Vista 360° activa ✦')">↻ 360°</button><button onclick="toast('Zoom de vitrina')">＋ Zoom</button><button onclick="toast('Pieza destacada')">✦ Destacar</button></div></div>
+<div class="drop-hero"><div class="drop-kicker">ARX DROPS · BÚSQUEDA</div><h1>Encuentra la pista.</h1><div class="mut">Los Drops no se consiguen fácilmente. Las pistas pueden aparecer en ARX, WhatsApp o nuestras redes. Cuando completes la búsqueda, tu vitrina aparecerá automáticamente.</div></div>
+<div class="sec">DROP ACTIVO</div><div class="card"><div class="row"><div class="mini">🎁</div><div><b>Hay una búsqueda en curso</b><div class="mut">Busca las pistas publicadas por la comunidad.</div></div></div><button class="btn" onclick="openDropClue()">🔎 Ver estado de mi búsqueda</button></div>
+<div id="dropVault" class="hidden">
+<div class="sec">MI VITRINA</div><div class="vault"><div class="vault-top"><div><div class="vault-title">Vitrina ARX</div><div class="mut">Figura 3D desbloqueada</div></div><span class="vault-badge">COLECCIÓN</span></div><div class="viewer-premium"><div id="unlockedFigure" class="big3d">🦋</div></div><div class="vault-controls"><button onclick="toast('Vista 360° activa ✦')">↻ 360°</button><button onclick="toast('Zoom de vitrina')">＋ Zoom</button><button onclick="toast('Pieza destacada')">✦ Destacar</button></div></div>
+</div>
+<div class="sec">CÓMO FUNCIONA</div><div class="grid"><div class="card"><b>💬 Comunidad</b><div class="mut">Una pista puede aparecer en WhatsApp.</div></div><div class="card"><b>📱 Redes</b><div class="mut">Busca códigos escondidos en nuestras publicaciones.</div></div><div class="card"><b>🧩 ARX</b><div class="mut">Algunas pistas se desbloquean dentro de la web.</div></div><div class="card"><b>🎁 Recompensa</b><div class="mut">Al completar la búsqueda consigues una figura 3D coleccionable.</div></div></div>
+<div class="sec">MI COLECCIÓN</div><div id="dropCollection" class="collection-strip"></div>
 </section>
 
 <section id="garden" class="screen">
@@ -134,11 +135,11 @@ button,input{font:inherit}button{cursor:pointer}
 <div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🥀</div><b>Rosa Obsidiana</b><div class="mut">50 ✦</div></div>
 <div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">✨</div><b>Flor Celestial</b><div class="mut">100 ✦</div></div>
 </div></section>
-<section id="calendar" class="screen"><div class="hero"><div class="ey">CALENDARIO ARX</div><h1>Que no se te olvide nadie.</h1><div class="mut">Cumpleaños y eventos privados con avisos configurables.</div></div><button class="btn" onclick="openBirthday()">＋ Añadir cumpleaños</button><div class="sec">AGOSTO 2026</div><div class="card"><div class="calendar" id="cal"></div></div><div class="sec">PRÓXIMOS AVISOS</div><div id="birthdays"><div class="event"><b>🎂 Vera · 18 agosto</b><div class="mut">Aviso configurado · 7 días antes</div></div></div></section>
+<section id="calendar" class="screen"><div class="hero"><div class="ey">CALENDARIO ARX</div><h1>Que no se te olvide nadie.</h1><div class="mut">Cumpleaños y eventos privados con avisos configurables.</div></div><button class="btn" onclick="openBirthday()">＋ Añadir cumpleaños</button><div class="sec">AGOSTO 2026</div><div class="card"><div class="calendar" id="cal"></div></div><div class="sec">PRÓXIMOS AVISOS</div><div id="birthdays"><div class="notice">Todavía no tienes cumpleaños guardados.</div></div></section>
 
-<section id="missions" class="screen"><div class="hero"><div class="ey">MISIONES DE HOY</div><h1>Haz que pase algo.</h1><div class="mut">Completa pequeñas acciones y gana XP, flechazos y recompensas.</div></div><div class="sec">HOY</div><div class="card"><div class="mission"><div class="check">✓</div><div><b>Entra en ARX</b><div class="mut">+20 XP</div></div></div><div class="mission"><div class="check">○</div><div><b>Descubre 3 perfiles</b><div class="mut">+30 XP</div></div></div><div class="mission"><div class="check">○</div><div><b>Envía 1 flechazo</b><div class="mut">+40 XP</div></div></div><div class="mission"><div class="check">○</div><div><b>Participa en un evento</b><div class="mut">+50 XP</div></div></div><button class="btn" onclick="claimMission()">Reclamar recompensa diaria</button></div><div class="sec">LOGROS</div><div class="grid"><div class="card"><div class="heart">🌙</div><b>Nocturna</b><div class="mut">Activa por la noche</div></div><div class="card"><div class="heart">🎁</div><b>Coleccionista</b><div class="mut">Consigue 10 Drops</div></div><div class="card"><div class="heart">💖</div><b>Conectada</b><div class="mut">Consigue 10 matches</div></div><div class="card"><div class="heart">🗺️</div><b>Exploradora</b><div class="mut">Participa en eventos</div></div></div></section>
-<section id="notifications" class="screen"><div class="sec">NOTIFICACIONES</div><div class="event"><b>♡ Vera te ha enviado un flechazo</b><div class="mut">Hace 8 min</div></div><div class="event"><b>🎉 Tu evento comienza en 1 hora</b><div class="mut">Noche de juegos · 21:00</div></div><div class="event"><b>✦ Hay un Drop cerca</b><div class="mut">A unos 80 m de tu ubicación</div></div><div class="event"><b>🏆 Has subido al nivel 18</b><div class="mut">Nuevo marco de perfil desbloqueado</div></div></section>
-<section id="groups" class="screen"><div class="sec">MIS CÍRCULOS</div><div class="hero"><div class="ey">COMUNIDAD</div><h1>Encuentra a las tuyas.</h1><div class="mut">Pequeños círculos para compartir intereses, planes y eventos.</div></div><div class="event"><b>✈ Viajeras</b><div class="mut">21 miembros · 4 eventos</div><button class="btn ghost">Entrar al círculo</button></div><div class="event"><b>🎮 Gaming</b><div class="mut">54 miembros · 8 eventos</div><button class="btn ghost">Entrar al círculo</button></div><div class="event"><b>🌙 ARX Night</b><div class="mut">32 miembros · activo ahora</div><button class="btn ghost">Entrar al círculo</button></div></section>
+<section id="missions" class="screen"><div class="hero"><div class="ey">MISIONES DE HOY</div><h1>Haz que pase algo.</h1><div class="mut">Aquí aparecerán tus misiones activas.</div></div><div class="sec">HOY</div><div id="missionList"><div class="notice">Todavía no hay misiones disponibles.</div></div></section>
+<section id="notifications" class="screen"><div class="sec">NOTIFICACIONES</div><div id="notificationList"><div class="notice">No tienes notificaciones nuevas.</div></div></section>
+<section id="groups" class="screen"><div class="sec">MIS CÍRCULOS</div><div class="hero"><div class="ey">COMUNIDAD</div><h1>Tus círculos.</h1><div class="mut">Aquí aparecerán los círculos a los que te unas.</div></div><div id="groupsList"><div class="notice">Todavía no perteneces a ningún círculo.</div></div></section>
 <section id="profile" class="screen">
 <div class="profile-main card">
   <div class="ey">MI ESPACIO ARX</div>
@@ -150,7 +151,8 @@ button,input{font:inherit}button{cursor:pointer}
   <div class="mut">Nivel 18 · Coleccionista nocturna</div>
   <div id="profileBio" class="profile-bio">Mi plan perfecto es perderme por una ciudad nueva.</div>
   <div id="profileInterests" class="tags" style="justify-content:center;margin-top:14px"></div>
-  <div class="profile-actions">
+  <div class="profile-section" style="width:100%;max-width:430px"><button class="btn ghost" onclick="installARX()">＋ Añadir ARX a la pantalla de inicio</button></div>
+<div class="profile-actions">
     <button class="btn" onclick="editProfile()">✎ Editar perfil</button>
     <button class="btn ghost" onclick="openInterests()">＋ Intereses</button>
   </div>
@@ -158,7 +160,7 @@ button,input{font:inherit}button{cursor:pointer}
 
 <div class="profile-section">
   <div class="sec">MI COLECCIÓN</div>
-  <div class="grid"><div class="card"><div class="stat">3</div><div class="mut">Piezas</div></div><div class="card"><div class="stat">4</div><div class="mut">Logros</div></div></div>
+  <div class="grid"><div class="card"><div class="stat" id="profilePieceCount">0</div><div class="mut">Piezas 3D</div></div><div class="card"><div class="stat">0</div><div class="mut">Logros</div></div></div>
 </div>
 
 <div id="founderPanel" class="card hidden" style="margin-top:18px"><div class="ey">ARX CONTROL</div><h2 style="margin:7px 0">Panel de fundadora ✦</h2><div class="mut">Acceso total al prototipo: comunidades, miembros, Drops, eventos, coleccionables y configuración.</div><button class="btn" onclick="openImprovements()">💡 Ver mejoras recibidas <span id="improvementCount">0</span></button></div>
@@ -174,10 +176,6 @@ button,input{font:inherit}button{cursor:pointer}
   <div class="card"><div class="row"><div class="mini">💡</div><div><b>¿Cómo podemos mejorar ARX?</b><div class="mut">Tu opinión ayuda a construir las próximas funciones.</div></div></div><button class="btn" onclick="openImprovementForm()">＋ Enviar una mejora</button></div>
 </div>
 
-<div class="profile-section">
-  <div class="sec">COMUNIDAD</div>
-  <div class="grid"><button class="card ghost" onclick="show('groups')">👥 Círculos<br><small>Mis comunidades</small></button><button class="card ghost" onclick="show('missions')">🎯 Misiones<br><small>Gana XP</small></button></div>
-</div>
 <input id="profilePhotoInput" type="file" accept="image/*" hidden onchange="photoSelected(event)">
 </section>
 </main>
@@ -188,12 +186,7 @@ button,input{font:inherit}button{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-let state=JSON.parse(localStorage.getItem('arx_v4')||'{}'); state=Object.assign({code:"",logged:false,role:"",community:"ARX",visible:false,displayName:"Aoi",bio:"Mi plan perfecto es perderme por una ciudad nueva.",photo:"",sent:[],matches:["vera"],arrows:5,dailyClaim:"",improvements:[],missionClaimed:false,interests:["✈ Viajes","☕ Cafés","🎮 Gaming","♫ Indie"],tokens:120,flowers:[],events:[],dailyQuestionKey:"",dailyQuestionIndex:0,dailyAnswers:{},pendingConnections:[],collectedFigures:[],dropProgress:{}} ,state); if(!Array.isArray(state.improvements))state.improvements=[]; if(!Array.isArray(state.interests))state.interests=[]; if(!Array.isArray(state.flowers))state.flowers=[]; if(!Array.isArray(state.events))state.events=[]; if(!Array.isArray(state.pendingConnections))state.pendingConnections=[]; if(!Array.isArray(state.collectedFigures))state.collectedFigures=[]; if(!state.dailyAnswers||typeof state.dailyAnswers!=='object')state.dailyAnswers={}; if(!state.dropProgress||typeof state.dropProgress!=='object')state.dropProgress={}; if(typeof state.tokens!=='number')state.tokens=120;
-function renderDrops(){const el=$('collectionList');if(!el)return;const names={
- 'ARX-DROP-CENTROARX':'🦋 Aurora',
- 'ARX-DROP-ZONAAURORA':'🪐 Orbit',
- 'ARX-DROP-PASEOARX':'🌙 Nocturna'
-};const items=state.collectedFigures||[];el.innerHTML=items.map(id=>'<div class="collection-item"><div class="figure" style="height:180px"><div class="toy">'+(id.includes('ZONAAURORA')?'🪐':id.includes('PASEOARX')?'🌙':'🦋')+'</div></div><b>'+esc(names[id]||'Figura ARX')+'</b><div class="mut">Figura 3D · colección ARX</div></div>').join('')||'<div class="notice" style="grid-column:1/-1">Todavía no tienes figuras. Los Drops se consiguen siguiendo pistas.</div>'}
+let state=JSON.parse(localStorage.getItem('arx_v4')||'{}'); state=Object.assign({code:"",logged:false,role:"",community:"ARX",visible:false,displayName:"Aoi",bio:"Mi plan perfecto es perderme por una ciudad nueva.",photo:"",sent:[],matches:["vera"],arrows:5,dailyClaim:"",improvements:[],missionClaimed:false,interests:["✈ Viajes","☕ Cafés","🎮 Gaming","♫ Indie"],tokens:120,flowers:[],events:[],dropUnlocked:false,dropCollection:[],dailyAnswers:{},pendingConnections:[],dailyQuestionKey:"",dailyQuestionIndex:0,dailyAnswers:{},pendingConnections:[],collectedFigures:[],dropProgress:{}} ,state); if(!Array.isArray(state.improvements))state.improvements=[]; if(!Array.isArray(state.interests))state.interests=[]; if(!Array.isArray(state.flowers))state.flowers=[]; if(!Array.isArray(state.events))state.events=[]; if(!Array.isArray(state.pendingConnections))state.pendingConnections=[]; if(!Array.isArray(state.collectedFigures))state.collectedFigures=[]; if(!state.dailyAnswers||typeof state.dailyAnswers!=='object')state.dailyAnswers={}; if(!state.dropProgress||typeof state.dropProgress!=='object')state.dropProgress={}; if(typeof state.tokens!=='number')state.tokens=120;
 function save(){localStorage.setItem('arx_v4',JSON.stringify(state));if($('sentCount'))$('sentCount').textContent=state.sent.length;if($('matchCount'))$('matchCount').textContent=state.matches.length;if($('arrowBalance'))$('arrowBalance').textContent=state.arrows||0;if($('improvementCount'))$('improvementCount').textContent=state.improvements.length;if($('tokenBalance'))$('tokenBalance').textContent=state.tokens||0;renderInterests();renderGarden();renderEvents();renderProfile();renderDiscover();renderDrops();}
 if(typeof state.arrows!=='number')state.arrows=5;
 function claimDailyArrow(){const today=new Date().toISOString().slice(0,10);if(state.dailyClaim===today){toast('Ya has reclamado tu flechazo de hoy');return}state.dailyClaim=today;state.arrows++;save();toast('+1 flechazo diario ✦')}
@@ -287,22 +280,57 @@ const arxQuestions=[
 '¿Qué viaje nunca olvidarás?',
 '¿Qué gesto te hace confiar en alguien?'
 ];
-const discoverPeople=[
-{id:'luna',name:'Luna',age:26,interests:['🌙 Paseos nocturnos','🎬 Terror','☕ Cafés pequeños'],bio:'Me gustan las conversaciones largas y los planes que empiezan sin saber cómo terminan.',photo:'',prompt:'Café, carretera y acabar viendo el atardecer.'},
-{id:'marta',name:'Marta',age:24,interests:['🌊 Playa','🎵 Música','🎬 Cine'],bio:'Siempre tengo una playlist para cada viaje.',photo:'',prompt:'Playa, música y película en casa.'},
-{id:'vera',name:'Vera',age:24,interests:['✈ Viajes','♫ Indie','☕ Cafés'],bio:'Colecciono lugares bonitos y canciones para volver a ellos.',photo:'',prompt:'Perderme por una ciudad nueva y encontrar un café pequeño.'}
+const DAILY_QUESTIONS=[
+'¿Qué pequeño detalle consigue alegrarte un día malo?',
+'¿Cómo sería tu domingo perfecto?',
+'¿Dónde te escaparías mañana si pudieras?',
+'¿Qué canción describe tu semana?',
+'¿Qué cosa te gustaría aprender algún día?',
+'¿Qué plan improvisado nunca rechazarías?',
+'¿Qué lugar te hace sentir en casa?',
+'¿Qué gesto te hace confiar en alguien?',
+'¿Qué viaje nunca olvidarás?',
+'¿Qué harías con un día completamente libre?'
 ];
 function dailyQuestionKey(){return Math.floor(Date.now()/86400000)}
 function renderDiscover(){
- const key=dailyQuestionKey(); const q=arxQuestions[key%arxQuestions.length];
- $('dailyQuestion').textContent=q; $('questionDate').textContent='PREGUNTA · '+new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long'});
- const ans=state.dailyAnswers[key]; if(ans){$('dailyAnswer').value=ans.text||'';$('dailyAnswer').disabled=true;$('answerStatus').textContent='✓ Tu respuesta está publicada para la comunidad.';$('dailyAnswer').style.opacity='.65'}else{$('dailyAnswer').disabled=false;$('answerStatus').textContent=''}
- const el=$('dailyAnswers'); if(el){const samples=discoverPeople.map(p=>'<div class="card answer-card"><div class="row"><div class="mini">'+(p.name==='Luna'?'🌙':p.name==='Marta'?'🌊':'✦')+'</div><div><b>'+esc(p.name)+' · '+p.age+'</b><div class="mut">Respuesta de hoy</div></div></div><div style="margin-top:10px">“'+esc(p.prompt)+'”</div><button class="btn ghost" onclick="discoverFromAnswer(\''+p.id+'\')">✦ Me interesa esta respuesta</button></div>').join('');el.innerHTML=samples}
+ const key=dailyQuestionKey();
+ if($('dailyQuestion'))$('dailyQuestion').textContent=DAILY_QUESTIONS[key%DAILY_QUESTIONS.length];
+ const answers=state.dailyAnswers||{};
+ if($('dailyAnswer')){$('dailyAnswer').value=answers[key]||'';$('dailyAnswer').disabled=!!answers[key]}
+ if($('dailyAnswers')){
+   const list=Object.keys(answers).map(k=>answers[k]).filter(Boolean);
+   $('dailyAnswers').innerHTML=list.map(a=>'<div class="event"><b>'+esc(a.name||'Miembro ARX')+'</b><div class="mut" style="margin-top:6px">'+esc(a.text)+'</div><button class="btn ghost" onclick="requestConnection(\''+esc(a.name||'Miembro ARX')+'\')">✦ Conectar</button></div>').join('')||'<div class="notice">Todavía no hay respuestas publicadas.</div>';
+ }
 }
-function saveDailyAnswer(){const key=dailyQuestionKey();if(state.dailyAnswers[key]){toast('Ya has respondido la pregunta de hoy');return}const text=$('dailyAnswer').value.trim();if(text.length<3){toast('Escribe una respuesta antes de publicar');return}state.dailyAnswers[key]={text,date:new Date().toISOString()};save();renderDiscover();toast('Respuesta publicada ✦')}
-function surpriseMe(){const candidates=discoverPeople.filter(p=>p.id!==state.displayName.toLowerCase()&&!state.matches.includes(p.id));const pool=candidates.length?candidates:discoverPeople;const p=pool[Math.floor(Math.random()*pool.length)];const common=p.interests.slice(0,3);openM('<div class="ey">✦ EL DESCUBRIMIENTO DE HOY</div><h2>ARX ha encontrado algo</h2><div class="card" style="margin-top:12px"><div class="row"><div class="mini">'+(p.name==='Luna'?'🌙':p.name==='Marta'?'🌊':'✦')+'</div><div><b>'+esc(p.name)+' · '+p.age+'</b><div class="mut">Perfil público · ubicación privada</div></div></div><div class="tags">'+common.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="mut" style="margin-top:12px"><b>Lo que os une:</b><br>'+esc(p.prompt)+'</div><div class="mut" style="margin-top:10px">Puedes descubrir su mundo y enviar una conexión. El chat permanece cerrado hasta que la conexión sea mutua.</div></div><button class="btn" onclick="openDiscoveryProfile(\''+p.id+'\')">Descubrir su mundo</button>');}
-function getPerson(id){return discoverPeople.find(p=>p.id===id)||discoverPeople[0]}
-function openDiscoveryProfile(id){const p=getPerson(id);const connected=state.matches.includes(p.id);const pending=state.pendingConnections.includes(p.id);closeM();openM('<div class="ey">PERFIL PÚBLICO · PRIVACIDAD ARX</div><h2>'+esc(p.name)+' · '+p.age+'</h2><div class="mut">📍 Ubicación privada · Solo muestra lo que ha decidido compartir</div><div class="tags">'+p.interests.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="card" style="margin-top:12px"><b>Bio</b><div class="mut" style="margin-top:6px">'+esc(p.bio)+'</div></div><div class="card" style="margin-top:10px"><b>Respuesta de hoy</b><div style="margin-top:6px">“'+esc(p.prompt)+'”</div></div>'+(connected?'<button class="btn" onclick="closeM();show(\'privateChat\')">💬 Abrir chat · Conexión mutua</button>':pending?'<button class="btn ghost" disabled>⌁ Conexión enviada · esperando respuesta</button>':'<button class="btn" onclick="sendConnection(\''+p.id+'\')">✦ Enviar conexión</button><button class="btn ghost" onclick="openFlowerPicker(\''+esc(p.name)+'\')">🌹 Dejar una flor</button>'))}function sendConnection(id){if(state.pendingConnections.includes(id)){toast('Ya has enviado esta conexión');return}state.pendingConnections.push(id);save();closeM();toast('Solicitud enviada. El chat queda cerrado hasta que sea mutua ✦')}function discoverFromAnswer(id){openDiscoveryProfile(id)}
+function saveDailyAnswer(){
+ const key=dailyQuestionKey();
+ if(state.dailyAnswers&&state.dailyAnswers[key]){toast('Ya has respondido la pregunta de hoy');return}
+ const text=$('dailyAnswer').value.trim();
+ if(text.length<3){toast('Escribe una respuesta antes de publicar');return}
+ state.dailyAnswers=state.dailyAnswers||{};
+ state.dailyAnswers[key]={name:state.displayName||'Aoi',text:text,date:new Date().toISOString()};
+ save();renderDiscover();toast('Respuesta publicada ✦');
+}
+function surpriseMe(){
+ const candidates=[
+  ['Lucía','🌙 Paseos nocturnos · 🎬 Terror · ☕ Cafés pequeños','Las dos habéis elegido perderos por la ciudad de noche antes que ir a una discoteca.'],
+  ['Marta','🌊 Mar · 🎵 Música · ✈️ Viajes','Las dos habéis elegido un viaje improvisado antes que unas vacaciones perfectamente planeadas.'],
+  ['Luna','🎨 Arte · 🎬 Cine · ☕ Cafés','Compartís la idea de que un buen plan puede empezar con un café y terminar viendo una película.']
+ ];
+ const p=candidates[Math.floor(Math.random()*candidates.length)];
+ const r=$('surpriseResult'); if(!r)return;
+ r.classList.remove('hidden');
+ r.innerHTML='<div class="ey">✦ ARX HA ENCONTRADO ALGO</div><h2 style="margin:7px 0">'+p[0]+'</h2><div class="mut">Una coincidencia curiosa</div><div class="tags">'+p[1].split(' · ').map(x=>'<span class="tag">'+x+'</span>').join('')+'</div><div class="mut" style="margin-top:11px"><b>Lo que os une:</b><br>'+p[2]+'</div><div class="mut" style="margin-top:10px">Puedes descubrir su mundo, pero el chat permanece cerrado hasta que exista una conexión mutua.</div><button class="btn" onclick="discoverProfile(\''+p[0]+'\')">Descubrir su mundo</button><button class="btn ghost" onclick="requestConnection(\''+p[0]+'\')">✦ Enviar conexión</button><button class="btn ghost" onclick="openFlowerPicker(\''+p[0]+'\')">🌹 Dejar una flor</button>';
+}
+function discoverProfile(name){
+ openM('<div class="ey">SU MUNDO ARX</div><h2>'+esc(name)+'</h2><div class="avatar"><div class="fallback">✦</div></div><div class="tags"><span class="tag">🌙 Intereses</span><span class="tag">☕ Cafés</span><span class="tag">🎵 Música</span></div><div class="notice" style="margin-top:12px">🔐 El chat está cerrado hasta que exista una conexión mutua.</div><button class="btn" onclick="closeM();requestConnection(\''+esc(name)+'\')">✦ Enviar conexión</button>'
+ );
+}
+function requestConnection(name){state.sent=state.sent||[];if(!state.sent.includes(name)){state.sent.push(name);save();toast('Solicitud enviada a '+name+' ✦')}else toast('Ya has enviado una solicitud a '+name)}
+function openDropClue(){openM('<div class="ey">ARX DROP · BÚSQUEDA</div><h2>¿Has encontrado la pista?</h2><div class="mut">Los códigos pueden estar escondidos en WhatsApp, Instagram, TikTok u otras pistas de ARX.</div><div class="form" style="margin-top:14px"><label>CÓDIGO ENCONTRADO<input id="dropCode" placeholder="Introduce el código" autocomplete="off"></label><button class="btn" onclick="checkDropCode()">Desbloquear Drop</button></div>')}
+function checkDropCode(){const code=($('dropCode').value||'').trim().toUpperCase();if(code==='ARX-7K92'){state.dropUnlocked=true;state.dropCollection=state.dropCollection||[];if(!state.dropCollection.includes('🦋'))state.dropCollection.push('🦋');save();closeM();toast('🎉 Drop desbloqueado · figura 3D conseguida');show('drops')}else toast('Código incorrecto. Sigue buscando las pistas ✦')}
+function renderDrops(){const v=$('dropVault');if(v)v.classList.toggle('hidden',!state.dropUnlocked);const c=$('dropCollection');if(c)c.innerHTML=(state.dropCollection||[]).map(x=>'<div class="collection-chip"><b>'+x+' Figura 3D</b><span>Conseguida</span></div>').join('')||'<div class="notice">Tu colección está vacía. Completa un Drop para conseguir tu primera figura 3D.</div>'}
 function arrow(name){
   if((state.arrows||0)<=0){toast('No tienes conexiones disponibles');return}
   if(state.sent.includes(name)){toast('Ya has enviado una conexión');return}
@@ -325,27 +353,8 @@ function openPoll(){openM('<div class="ey">CHAT ARX</div><h2>Crear encuesta</h2>
 function sendPoll(){const q=$('pollQ').value||'¿Qué hacemos?';const a=$('poll1').value||'Opción 1';const b=$('poll2').value||'Opción 2';openM('');closeM();let m=document.createElement('div');m.className='msg me';m.innerHTML='<b>▣ '+q+'</b><div class="tags"><button class="toolbtn" onclick="toast(\'Votaste por '+a+'\')">'+a+'</button><button class="toolbtn" onclick="toast(\'Votaste por '+b+'\')">'+b+'</button></div>';$('messages').appendChild(m)}
 function openPlan(person){openM('<div class="ey">PLAN ARX · '+person+'</div><h2>¿Qué os apetece?</h2><div class="flower-modal-grid"><button class="flower-choice" onclick="sendPlan(\'☕ Café\');closeM()">☕ Café</button><button class="flower-choice" onclick="sendPlan(\'🎬 Cine\');closeM()">🎬 Cine</button><button class="flower-choice" onclick="sendPlan(\'🚶 Paseo\');closeM()">🚶 Paseo</button><button class="flower-choice" onclick="sendPlan(\'🎮 Gaming\');closeM()">🎮 Gaming</button></div>')}
 function sendPlan(plan){appendTextMessage('✦ Propongo un plan: '+plan,true);toast('Propuesta enviada')}
-function drop(zone='Zona ARX'){
-  const key='drop-'+zone.replace(/\W/g,'').toLowerCase();
-  const progress=state.dropProgress[key]||{stage:0,found:false};
-  const stages=[
-    {title:'Pista 1 · La comunidad',text:'La primera pista no está dentro de ARX. Revisa la comunidad de WhatsApp o la publicación de ARX en redes sociales.'},
-    {title:'Pista 2 · Código escondido',text:'Busca un código oculto en una imagen, vídeo, historia o mensaje de ARX. Introduce el código para avanzar.'},
-    {title:'Pista 3 · Última pieza',text:'La última pista puede estar dentro de ARX. Resuelve el pequeño acertijo para encontrar la figura.'}
-  ];
-  if(progress.found){openM('<div class="ey">ARX DROP</div><h2>Ya has conseguido este Drop ✦</h2><div class="mut">Esta zona guarda una figura que ya forma parte de tu colección.</div>');return}
-  const st=stages[Math.min(progress.stage,stages.length-1)];
-  let html='<div class="ey">ARX DROP · '+esc(zone)+'</div><h2>'+st.title+'</h2><div class="mut">'+st.text+'</div><div class="drop-clue"><b>🔎 Objetivo</b><div class="mut" style="margin-top:6px">No damos coordenadas exactas. Los Drops se encuentran mediante pistas, nunca mediante la ubicación de personas.</div></div>';
-  if(progress.stage===0) html+='<button class="btn" onclick="advanceDrop(\''+esc(key)+'\')">He encontrado la pista</button>';
-  else if(progress.stage===1) html+='<div class="form" style="margin-top:12px"><label>CÓDIGO ENCONTRADO<input id="dropCode" class="code-box" placeholder="ARX-XXXX"></label><button class="btn" onclick="checkDropCode(\''+esc(key)+'\')">Comprobar código</button></div>';
-  else html+='<div class="form" style="margin-top:12px"><label>ÚLTIMA PISTA<textarea id="dropAnswer" placeholder="¿Qué crees que esconde ARX?"></textarea></label><button class="btn" onclick="solveDrop(\''+esc(key)+'\')">Resolver Drop</button></div>';
-  openM(html);
-}
-function advanceDrop(key){state.dropProgress[key]={stage:1,found:false};save();closeM();drop(key.replace('drop-',''));}
-function checkDropCode(key){const code=($('dropCode').value||'').trim().toUpperCase();const valid=['ARX-AURORA','ARX-7K92','ARX-ORBIT'];if(!valid.includes(code)){toast('Código incorrecto. Busca la pista en la comunidad o redes ✦');return}state.dropProgress[key]={stage:2,found:false};save();closeM();drop(key.replace('drop-',''));}
-function solveDrop(key){const answer=($('dropAnswer').value||'').trim();if(answer.length<4){toast('Necesitas completar la última pista');return}state.dropProgress[key]={stage:3,found:false};save();claimDropFigure(key);}
-function claimDropFigure(key){const figureId='ARX-DROP-'+key.replace('drop-','').toUpperCase();if(state.collectedFigures.includes(figureId)){state.dropProgress[key].found=true;save();toast('Esta figura ya está en tu colección');closeM();return}state.collectedFigures.unshift(figureId);state.dropProgress[key]={stage:3,found:true};save();openM('<div class="ey">DROP DESBLOQUEADO</div><h2>🎉 Has encontrado una figura 3D</h2><div class="viewer"><div class="big3d">🦋</div></div><div class="mut">La figura es la única recompensa de este Drop. Se ha añadido a tu colección.</div><button class="btn" onclick="closeM();show(\'drops\')">Ver mi colección</button>')}
-function figure(e,r,d){openM('<div class="ey">FIGURA 3D</div><h2>'+r+'</h2><div class="mut">Adquirida el '+d+' · colección ARX</div><div class="viewer"><div class="big3d">'+e+'</div></div><div class="notice">Vitrina 360° de demostración. Después podremos sustituirla por un GLB/GLTF real.</div>')}
+function drop(zone='Zona ARX'){openDropClue()}
+function figure(e,r,d){openM('<div class="ey">FIGURA 3D</div><h2>'+r+'</h2><div class="mut">Adquirida el '+d+' · colección ARX</div><div class="viewer"><div class="big3d">'+e+'</div></div>')}
 function openEvent(){openM('<div class="ey">NUEVO EVENTO</div><h2>Crear experiencia ARX</h2><div class="mut">Publica una quedada sin mostrar la ubicación de ninguna persona.</div><div class="form"><label>NOMBRE<input id="evName" placeholder="Ej. Picnic ARX"></label><label>FECHA<input id="evDate" type="date"></label><label>HORA<input id="evTime" type="time"></label><label>ZONA<input id="evPlace" placeholder="Ej. Centro ARX"></label><label>AFORO MÁXIMO<input id="evMax" type="number" min="2" value="10"></label><label>DESCRIPCIÓN<textarea id="evDesc" placeholder="Cuenta de qué va el plan..."></textarea></label><button class="btn" onclick="createEvent()">Publicar evento</button></div>')}
 function createEvent(){let ev={id:Date.now(),name:$('evName').value.trim()||'Nuevo evento',date:$('evDate').value||'Fecha por confirmar',time:$('evTime').value||'Hora por confirmar',place:$('evPlace').value.trim()||'Zona ARX',max:parseInt($('evMax').value||10),desc:$('evDesc').value.trim(),attending:false};state.events.unshift(ev);save();closeM();toast('Evento publicado ✦');show('map')}
 function renderEvents(){const el=$('events');if(!el)return;const arr=state.events.length?state.events:[];el.innerHTML=arr.map(ev=>'<div class="event"><b>✦ '+esc(ev.name)+'</b><div class="mut">'+esc(ev.date)+' · '+esc(ev.time)+' · '+esc(ev.place)+' · hasta '+ev.max+' personas</div>'+(ev.desc?'<div class="mut" style="margin-top:6px">'+esc(ev.desc)+'</div>':'')+'<button class="btn ghost event-attend" onclick="attendEvent('+ev.id+')">'+(ev.attending?'✓ Vas a asistir':'Me apunto')+'</button></div>').join('')||'<div class="notice">Todavía no hay eventos creados. Sé la primera en organizar uno.</div>'}
@@ -365,11 +374,16 @@ function renderGarden(){const el=$('gardenList');if(!el)return;el.innerHTML=stat
 function openTokenInfo(){openM('<div class="ey">TOKENS ARX</div><h2>Cómo conseguir tokens ✦</h2><div class="event"><b>🎯 Misiones</b><div class="mut">Completa misiones y recibe recompensas.</div></div><div class="event"><b>🎉 Eventos</b><div class="mut">Participa en actividades de la comunidad.</div></div><div class="event"><b>📅 Constancia</b><div class="mut">Premios por actividad y participación.</div></div>')}
 function openBirthday(){openM('<div class="ey">CALENDARIO</div><h2>Añadir cumpleaños</h2><div class="form"><label>NOMBRE<input id="bName" placeholder="Nombre"></label><label>FECHA<input id="bDate" type="date"></label><label>AVISO<select id="bNotice"><option>El mismo día</option><option>1 día antes</option><option selected>7 días antes</option><option>30 días antes</option></select></label><button class="btn" onclick="createBirthday()">Guardar cumpleaños</button></div>')}
 function createBirthday(){let n=$('bName').value||'Cumpleaños',d=$('bDate').value||'Fecha por confirmar',a=$('bNotice').value;$('birthdays').insertAdjacentHTML('afterbegin','<div class="event"><b>🎂 '+n+'</b><div class="mut">'+d+' · Aviso: '+a+'</div></div>');closeM();toast('Cumpleaños guardado')}
+
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e});
+async function installARX(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;return}if(navigator.share){try{await navigator.share({title:'ARX',text:'Añade ARX a tu pantalla de inicio desde Safari o tu navegador.'})}catch(e){}}else toast('En iPhone: Compartir → Añadir a pantalla de inicio ✦')}
 function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
 function renderCal(){let c=$('cal'),d=['L','M','X','J','V','S','D'];c.innerHTML=d.map(x=>'<div class="day"><b>'+x+'</b></div>').join('');for(let i=1;i<=31;i++)c.innerHTML+='<div class="day '+(i===18?'eventday':'')+'">'+i+'</div>'}renderCal();
-save();
-if(state.logged){$('gate').style.display='none';$('app').style.display='block';applyRoleUI();}
+save();renderDiscover();renderDrops();
+state.logged=false; $('gate').style.display='grid'; $('app').style.display='none';
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 window.addEventListener('DOMContentLoaded',()=>{ $('gate').style.display='grid'; $('app').style.display='none'; $('communityCode').value=''; });
 </script>
 </body>
