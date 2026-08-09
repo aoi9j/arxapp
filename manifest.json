@@ -1,0 +1,9 @@
+{
+  "name": "ARX",
+  "short_name": "ARX",
+  "start_url": "./ARX_v6_limpia.html",
+  "display": "standalone",
+  "background_color": "#07070b",
+  "theme_color": "#07070b",
+  "description": "Comunidad privada ARX"
+}
