@@ -1,0 +1,9 @@
+{
+  "name":"ARX",
+  "short_name":"ARX",
+  "start_url":"./ARX_mejoras_2.html",
+  "display":"standalone",
+  "background_color":"#07070b",
+  "theme_color":"#07070b",
+  "description":"ARX · comunidad privada"
+}
