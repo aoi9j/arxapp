@@ -1,9 +1,17 @@
 {
   "name": "ARX",
   "short_name": "ARX",
-  "start_url": "./ARX_v6_limpia.html",
+  "start_url": "/arxapp/",
+  "scope": "/arxapp/",
   "display": "standalone",
   "background_color": "#07070b",
   "theme_color": "#07070b",
-  "description": "Comunidad privada ARX"
+  "description": "Comunidad privada ARX",
+  "icons": [
+    {
+      "src": "/arxapp/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
