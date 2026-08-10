@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARX">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="arx-config.js"></script>
+<title>ARX</title>
+<style>
+:root{--bg:#07070b;--card:#111117dd;--line:#ffffff18;--txt:#f8f5fa;--mut:#aaa5b5;--p:#ff4fa3;--v:#8068ff;--c:#63e8ff;--g:#62dfa0}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+#gate{position:fixed;inset:0;z-index:999;background:radial-gradient(circle at 20% 0,#36142f,transparent 34%),radial-gradient(circle at 100% 80%,#171d42,transparent 40%),#07070b;display:grid;place-items:center;padding:22px}
+.login{width:min(420px,100%);text-align:center}.mark{font-size:42px;font-weight:950;letter-spacing:.28em;margin-left:.28em}.lock{margin:30px auto 22px;width:82px;height:82px;border:1px solid #ffffff20;border-radius:28px;background:#ffffff08;display:grid;place-items:center;font-size:31px;box-shadow:0 20px 70px #0009}.login h1{font-size:28px;margin:0 0 8px}.login p{color:var(--mut);font-size:12px;line-height:1.6;margin:0 auto 24px;max-width:330px}.code-label{font-size:9px;letter-spacing:.14em;color:#a8a1af;font-weight:900;margin-bottom:9px}.single-code{margin-bottom:12px}.single-code input{width:100%;height:54px;background:#ffffff09;border:1px solid #ffffff20;color:#fff;border-radius:16px;text-align:center;font-size:15px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;outline:none}.single-code input:focus{border-color:#ff4fa3;box-shadow:0 0 0 3px #ff4fa31a}.single-code input::placeholder{color:#77717f;letter-spacing:.08em}.login-btn{margin-top:0!important}.paste-btn{margin-top:9px;background:transparent;border:0;color:#c6bfd0;font-size:10px;padding:8px}.paste-btn:hover{color:#fff}.codebox{display:flex;gap:8px}.codebox input{min-width:0;flex:1;background:#ffffff09;border:1px solid #ffffff20;color:#fff;border-radius:16px;padding:15px;text-align:center;letter-spacing:.16em;text-transform:uppercase;outline:none}.primary{border:0;border-radius:16px;padding:15px 18px;background:linear-gradient(135deg,var(--p),var(--v));color:#fff;font-weight:900}.login .primary{width:100%;margin-top:10px}.error{min-height:18px;color:#ff83b9;font-size:11px;margin-top:9px}.privacy{margin-top:25px;color:#777280;font-size:9px;letter-spacing:.06em}
+#app{display:none}.app{max-width:570px;margin:auto;min-height:100vh;padding-bottom:100px}.top{position:sticky;top:0;z-index:20;padding:16px;background:#07070bcc;backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.22em;font-size:26px}.private{font-size:9px;letter-spacing:.1em;border:1px solid #ffffff20;background:#ffffff08;border-radius:99px;padding:8px 10px}.screen{display:none;padding:14px}.screen.on{display:block}.hero,.card{border:1px solid var(--line);background:linear-gradient(145deg,#ffffff0d,#ffffff04);backdrop-filter:blur(18px);border-radius:27px;box-shadow:0 25px 70px #0007}.hero{padding:22px}.ey{font-size:10px;letter-spacing:.17em;color:#d5cfdb;font-weight:900}.hero h1{font-size:34px;line-height:1;margin:8px 0}.mut{color:var(--mut);font-size:12px;line-height:1.5}.btn{width:100%;border:0;border-radius:16px;padding:14px;margin-top:12px;background:linear-gradient(135deg,var(--p),var(--v));color:white;font-weight:850}.ghost{background:#ffffff08;border:1px solid var(--line)}.sec{margin:20px 3px 10px;font-size:12px;font-weight:850;color:#d9d3df}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{padding:15px}.row{display:flex;align-items:center;gap:12px}.mini{width:66px;height:66px;border-radius:21px;display:grid;place-items:center;background:linear-gradient(145deg,var(--p),var(--v));font-size:27px;overflow:hidden}.mini img{width:100%;height:100%;object-fit:cover}.avatar{height:250px;border-radius:22px;overflow:hidden;background:#10121b}.avatar img{width:100%;height:100%;object-fit:cover}.fallback{height:100%;display:grid;place-items:center;font-size:100px}.status{display:inline-flex;gap:6px;align-items:center;padding:6px 9px;border-radius:99px;background:#62dfa015;border:1px solid #62dfa033;font-size:10px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 14px var(--g)}.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.tag{padding:7px 9px;border:1px solid var(--line);border-radius:99px;background:#ffffff08;font-size:10px}.stat{font-size:28px;font-weight:950;margin-top:5px}
+.map{height:430px;border-radius:27px;position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(125deg,#14202b,#10121a)}.map:before{content:"";position:absolute;inset:-20%;background:linear-gradient(35deg,transparent 47%,#ffffff09 48% 50%,transparent 51%);background-size:85px 85px;transform:rotate(8deg)}.pin,.drop{position:absolute;display:grid;place-items:center}.pin{width:43px;height:43px;border-radius:50%;background:#0b0b11dd;border:1px solid #fff3}.pin:after{content:"";width:12px;height:12px;background:var(--p);border-radius:50%;box-shadow:0 0 24px var(--p)}.drop{left:52%;top:43%;width:68px;height:68px;border-radius:21px;background:linear-gradient(145deg,#fff0a5,#ff5eae);color:#180a18;font-size:27px;box-shadow:0 0 50px #ff4fa377;animation:pulse 1.8s infinite;cursor:pointer}.p1{left:18%;top:24%}.p2{left:72%;top:18%}.p3{left:42%;top:65%}.p4{left:78%;top:74%}@media(max-width:420px){.single-code input{font-size:13px;letter-spacing:.07em}}@keyframes pulse{50%{transform:scale(1.08)}}.mapinfo{position:absolute;top:14px;left:14px;background:#08090ddd;padding:10px;border-radius:13px;border:1px solid var(--line);font-size:10px;z-index:2}
+.profile-main{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 18px}.profile-avatar{width:128px;height:128px;border-radius:50%;object-fit:cover;border:2px solid #ffffff22;background:linear-gradient(145deg,#302044,#151725);box-shadow:0 18px 45px #0008}.profile-avatar.fallback{display:flex;align-items:center;justify-content:center;font-size:42px}.profile-name{font-size:30px;font-weight:900;margin-top:14px;letter-spacing:-.03em}.profile-bio{font-size:13px;line-height:1.6;color:#c8c1ce;max-width:520px;margin:10px auto 0}.profile-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;width:100%;max-width:430px}.profile-actions .btn{margin:0}.profile-section{margin-top:18px}.interest-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.interest-option.selected{border-color:#ff4fa3;background:#ff4fa31c;color:#fff}.profile-edit{display:grid;gap:12px}.profile-edit input,.profile-edit textarea{width:100%;background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:13px;color:#fff;outline:0}.profile-edit textarea{min-height:110px;resize:vertical}.avatar-wrap{position:relative;display:inline-block}.avatar-edit{position:absolute;right:0;bottom:4px;width:38px;height:38px;border-radius:50%;border:1px solid #ffffff33;background:#15151d;color:#fff;cursor:pointer}.tag{cursor:default}
+.cardphoto{width:100%;height:205px;border-radius:21px;object-fit:cover;background:linear-gradient(145deg,#302044,#151725)}.discover{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.name{font-size:19px;font-weight:900}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.arrow{width:54px;height:54px;border-radius:50%;background:#ff4fa314;border:1px solid #ff4fa355;color:#ff83bd;font-size:24px}.matchcard{position:relative;overflow:hidden}.matchbadge{position:absolute;right:13px;top:13px;padding:7px 9px;border-radius:99px;background:#63dfa014;border:1px solid #63dfa033;font-size:9px;font-weight:900}.matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profiletile{padding:11px;border:1px solid var(--line);border-radius:18px;background:#ffffff07}.profiletile img{width:100%;height:150px;object-fit:cover;border-radius:14px}.heart{font-size:30px}.matchlock{font-size:30px}
+.chat{display:flex;flex-direction:column;gap:9px}.msg{max-width:83%;padding:11px 13px;border-radius:18px;background:#ffffff09;border:1px solid var(--line);font-size:12px}.me{align-self:flex-end;background:linear-gradient(135deg,#6d49d9,#aa3e86)}.compose{display:flex;gap:7px;margin-top:10px}.compose input{flex:1;background:#ffffff08;border:1px solid var(--line);border-radius:15px;padding:12px;color:white;outline:0}.send{width:50px;border-radius:15px;background:linear-gradient(135deg,var(--p),var(--v));color:white;border:0}.event{padding:13px;border:1px solid var(--line);background:#ffffff07;border-radius:18px;margin-top:9px}.event b{font-size:12px}.form{display:grid;gap:9px}.form label{font-size:10px;color:#c8c1ce;font-weight:800}.form input,.form textarea,.form select{width:100%;background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:12px;color:white;outline:0}.form textarea{min-height:90px}.figure{height:230px;border-radius:24px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 30%,#ffffff18,transparent 35%),linear-gradient(145deg,#181427,#0e111a);border:1px solid var(--line);cursor:pointer}.toy{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-size:88px;filter:drop-shadow(0 20px 15px #0009);transition:.4s}.figure:hover .toy{transform:translate(-50%,-50%) rotateY(180deg) scale(1.1)}.rare{position:absolute;left:10px;top:10px;padding:6px 8px;border-radius:99px;background:#ffffff0d;border:1px solid #fff2;font-size:9px;font-weight:900;letter-spacing:.12em}.date{position:absolute;bottom:10px;left:10px;color:#aaa4b3;font-size:9px}.viewer{height:310px;border-radius:24px;background:radial-gradient(circle,#ffffff16,transparent 45%),linear-gradient(145deg,#171326,#0d1019);display:grid;place-items:center;perspective:800px;overflow:hidden}.big3d{font-size:130px;animation:spin 5s linear infinite;filter:drop-shadow(0 30px 20px #0009)}@keyframes spin{to{transform:rotateY(360deg)}}.mission{display:flex;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.check{width:28px;height:28px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center}.bar{height:7px;background:#fff1;border-radius:99px;overflow:hidden}.bar i{display:block;width:92%;height:100%;background:linear-gradient(90deg,var(--p),var(--c))}
+
+/* PREMIUM DROPS */
+.drop-hero{position:relative;overflow:hidden;padding:24px;border-radius:28px;border:1px solid #ffffff18;background:radial-gradient(circle at 75% 20%,#ff4fa322,transparent 35%),radial-gradient(circle at 20% 80%,#8068ff22,transparent 40%),linear-gradient(145deg,#17121f,#0b0d14);box-shadow:0 30px 90px #0008}
+.drop-hero:after{content:"✦";position:absolute;right:-18px;top:-28px;font-size:170px;color:#ffffff08;transform:rotate(18deg)}
+.drop-kicker{font-size:9px;letter-spacing:.18em;color:#cfc8d6;font-weight:900}
+.drop-hero h1{font-size:32px;line-height:1.02;margin:9px 0}.drop-hero .mut{max-width:340px}
+.drop-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.drop-action{border:1px solid #ffffff18;background:#ffffff08;color:#fff;border-radius:15px;padding:12px;font-size:10px;font-weight:850}
+.drop-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.drop-card{position:relative;overflow:hidden;border:1px solid #ffffff18;background:linear-gradient(145deg,#ffffff0c,#ffffff04);border-radius:24px;padding:10px;box-shadow:0 20px 55px #0006}.drop-card .figure{height:205px}.drop-meta{padding:10px 3px 2px}.drop-title{font-weight:900;font-size:13px}.drop-sub{font-size:9px;color:#9f99a9;margin-top:4px}.rarity-legend{color:#ffd98a}.rarity-exclusive{color:#c8baff}
+.collection-strip{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.collection-chip{min-width:105px;padding:12px;border:1px solid #ffffff18;border-radius:17px;background:#ffffff07}.collection-chip b{display:block;font-size:10px}.collection-chip span{font-size:9px;color:#9f99a9}
+.vault{padding:13px;border:1px solid #ffffff18;border-radius:27px;background:linear-gradient(145deg,#ffffff0b,#ffffff03)}.vault-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.vault-title{font-size:15px;font-weight:900}.vault-badge{font-size:8px;letter-spacing:.12em;padding:6px 8px;border-radius:99px;background:#ffffff0a;border:1px solid #ffffff18}
+.viewer-premium{height:330px;border-radius:23px;background:radial-gradient(circle at 50% 38%,#ffffff1c,transparent 30%),radial-gradient(circle at 50% 70%,#8068ff18,transparent 45%),linear-gradient(145deg,#181327,#090c13);display:grid;place-items:center;perspective:900px;overflow:hidden;border:1px solid #ffffff12}.viewer-premium .big3d{font-size:145px;animation:spin 5s linear infinite;filter:drop-shadow(0 35px 25px #000b)}
+.vault-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.vault-controls button{border:1px solid #ffffff18;background:#ffffff07;color:#cfc8d6;border-radius:12px;padding:9px;font-size:9px}
+@media(max-width:420px){.drop-grid{grid-template-columns:1fr}.drop-actions{grid-template-columns:1fr 1fr}.viewer-premium{height:290px}}
+.bottom{position:fixed;z-index:30;bottom:0;left:50%;transform:translateX(-50%);width:min(570px,100%);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#08080ddd;backdrop-filter:blur(22px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr)}.nav{background:transparent;border:0;color:#807b89;font-size:9px;padding:6px}.nav b{display:block;font-size:19px;margin-bottom:3px}.nav.active{color:white}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:2000;place-items:center;padding:15px}.modal.on{display:grid}.modalbox{width:min(510px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#19131f,#0d0e15);border:1px solid var(--line);border-radius:30px;padding:18px}.close{float:right;border:0;background:#fff1;color:white;border-radius:12px;padding:9px}.toast{position:fixed;z-index:80;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;background:#17151ddd;border:1px solid var(--line);padding:11px 15px;border-radius:99px;font-size:11px;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}.notice{padding:11px;border-radius:15px;background:#63e8ff0b;border:1px solid #63e8ff22;font-size:10px;color:#c8eaf1}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{padding:8px 2px;text-align:center;border-radius:10px;background:#ffffff06;font-size:10px}.eventday{background:#ff4fa31a;border:1px solid #ff4fa355}.hidden{display:none!important}
+
+/* ARX functional additions */
+.attachments{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.toolbtn{border:1px solid var(--line);background:#ffffff08;color:#fff;border-radius:12px;padding:8px 10px;font-size:10px}.toolbtn:active{transform:scale(.97)}.interest-picker{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.interest-option{cursor:pointer}.interest-option.selected{background:linear-gradient(135deg,var(--p),var(--v));border-color:#ffffff33}.garden{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.flower-card{padding:13px;text-align:center;border:1px solid var(--line);background:#ffffff07;border-radius:20px}.flower-3d{font-size:58px;filter:drop-shadow(0 15px 10px #0008);animation:flowerFloat 3s ease-in-out infinite}.flower-card:nth-child(2) .flower-3d{animation-delay:.4s}.flower-card:nth-child(3) .flower-3d{animation-delay:.8s}@keyframes flowerFloat{50%{transform:translateY(-7px) rotateY(12deg)}}.token-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:99px;background:#ffd76a15;border:1px solid #ffd76a33;color:#ffe39b;font-size:10px;font-weight:900}.map-privacy{position:absolute;bottom:12px;left:12px;right:12px;background:#08090ddd;border:1px solid var(--line);padding:10px;border-radius:14px;font-size:9px;color:#c9c3cf;z-index:2}.drop-zone{position:absolute;width:92px;height:92px;border-radius:50%;border:1px dashed #ffcb7a66;background:#ffcb7a0b;display:grid;place-items:center;color:#ffe4a8;cursor:pointer}.dz1{left:15%;top:20%}.dz2{right:14%;top:57%}.dz3{left:46%;top:68%}.event-attend{width:auto;margin-top:8px;padding:8px 11px}.audio-msg{display:flex;align-items:center;gap:8px}.audio-msg audio{max-width:190px}.media-msg{max-width:180px;border-radius:15px}.media-msg img{max-width:100%;border-radius:12px}.flower-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.flower-choice{padding:13px;border:1px solid var(--line);background:#ffffff08;border-radius:18px;text-align:center;cursor:pointer}.flower-choice:hover{background:#ffffff12}.flower-choice .flower-3d{font-size:48px}.balance{display:flex;justify-content:space-between;align-items:center;gap:10px}.sr-only-file{display:none}
+.discover-hero{background:radial-gradient(circle at 80% 15%,#9b5cff22,transparent 35%),radial-gradient(circle at 20% 85%,#ff4fa318,transparent 35%),linear-gradient(145deg,#17121f,#0b0d14)}.discovery-card{padding:18px}.question-card{padding:18px}.question-card h2{font-size:24px;line-height:1.15;margin:10px 0}.question-input{width:100%;min-height:100px;margin-top:14px;background:#ffffff08;border:1px solid var(--line);border-radius:16px;padding:13px;color:#fff;resize:vertical;outline:0}.answer-card{padding:15px;margin-top:9px}.connection-status{font-size:9px;padding:6px 9px;border-radius:99px;border:1px solid #ffffff18;background:#ffffff08}.drop-clue{padding:14px;border:1px solid var(--line);background:#ffffff07;border-radius:18px;margin-top:10px}.code-box{letter-spacing:.12em;text-align:center;text-transform:uppercase;font-weight:900}.collection-item{padding:12px;border:1px solid var(--line);background:#ffffff07;border-radius:18px}.collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.drop-progress{height:8px;background:#fff1;border-radius:99px;overflow:hidden;margin-top:8px}.drop-progress i{display:block;height:100%;width:33%;background:linear-gradient(90deg,var(--p),var(--v))}</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="login">
+    <div class="mark">ARX</div>
+    <div class="lock">⌁</div>
+    <h1>Tu espacio privado</h1>
+    <p>Introduce tu email y ARX te enviará un enlace seguro. Después necesitarás tu código ARX.</p>
+    <div class="form" style="text-align:left">
+      <label>EMAIL<input id="loginEmail" type="email" autocomplete="email" inputmode="email" placeholder="tu@email.com"></label>
+      <button class="primary login-btn" type="button" onclick="sendMagicLink()">Enviarme el enlace</button>
+    </div>
+    <div id="loginError" class="error"></div>
+    <div class="privacy">COMUNIDAD PRIVADA · EMAIL VERIFICADO · CÓDIGO ARX</div>
+  </div>
+</div>
+
+<div id="app">
+<div class="app">
+<header class="top"><div class="logo">ARX</div><div class="row"><button class="nav" style="font-size:18px;padding:4px" onclick="openNotifications()">♢<span id="notifBadge" style="display:inline-block;background:var(--p);border-radius:99px;padding:2px 5px;font-size:8px;vertical-align:top">0</span></button><div class="private">⌁ COMUNIDAD PRIVADA</div></div></header>
+<main>
+
+<section id="home" class="screen on">
+<div class="hero"><div class="ey">PRIVATE SANCTUARY</div><h1>Tu mundo.<br>Tu refugio.</h1><div class="mut">Descubre personas de tu comunidad, conecta mediante flechazos y convierte momentos en recuerdos coleccionables.</div><button class="btn" onclick="show('discover')">Descubrir personas →</button></div>
+<div class="sec">TU PERFIL</div>
+<div class="card"><div id="homeAvatar" class="avatar"><div class="fallback">✦</div></div><div class="row" style="margin-top:13px"><div><b id="homeName">Tu nombre</b><div class="mut">Tu espacio personal ARX</div></div></div><div id="homeInterests" class="tags"></div></div>
+<div class="card" style="margin-top:11px"><div class="row"><div class="mini">✦</div><div><b>Tu colección ARX</b><div class="mut">Tus figuras 3D aparecerán aquí cuando consigas un Drop.</div></div></div><button class="btn ghost" onclick="show('drops')">Abrir Drops →</button></div>
+</section>
+
+<section id="discover" class="screen">
+<div class="hero discover-hero"><div class="ey">✦ DESCUBRIR · PRIVACIDAD ARX</div><h1>No busques perfiles.<br>Descubre personas.</h1><div class="mut">Aquí puedes encontrar coincidencias, leer lo que piensa la comunidad y enviar una conexión. El chat permanece cerrado hasta que ambas personas aceptan.</div></div>
+<div class="sec">🎲 EL DESCUBRIMIENTO DE HOY</div>
+<div class="card discovery-card" id="surpriseCard"><div class="mut" id="surpriseIntro">ARX ha encontrado una coincidencia curiosa para ti.</div><button class="btn" onclick="surpriseMe()">✦ Sorpréndeme</button></div>
+<div class="sec">💭 PREGUNTA DEL DÍA</div>
+<div class="card question-card"><div class="ey" id="questionDate">24 HORAS · ARX</div><h2 id="dailyQuestion">Cargando pregunta…</h2><div class="mut">Una sola pregunta para toda la comunidad durante 24 horas.</div><textarea id="dailyAnswer" class="question-input" maxlength="280" placeholder="Escribe tu respuesta…"></textarea><button class="btn" onclick="saveDailyAnswer()">Publicar mi respuesta</button><div id="answerStatus" class="mut" style="margin-top:8px"></div></div>
+<div class="sec">🌙 RESPUESTAS DE ARX</div><div id="dailyAnswers"></div>
+<div class="card" style="margin-top:11px"><div class="row"><div class="mini">🔐</div><div><b>Conexión mutua</b><div class="mut">Puedes descubrir perfiles y mostrar interés, pero nadie puede escribirte desde aquí. El chat solo se abre cuando ambas aceptáis.</div></div></div></div>
+</section>
+
+<section id="matches" class="screen">
+<div class="hero"><div class="ey">CONEXIONES ARX</div><h1>Personas con las que conectas.</h1><div class="mut">Aquí nacen las conversaciones, los detalles y los planes. Sin flechazos obligatorios.</div></div>
+<div class="sec">TUS CONEXIONES</div>
+<div id="connectionList"><div class="notice">Todavía no tienes conexiones. Cuando exista una conexión mutua, aparecerá aquí.</div></div>
+</section>
+
+<section id="privateChat" class="screen">
+<div class="sec">CONVERSACIÓN</div><div class="card"><div class="notice">El chat se abrirá cuando exista una conexión mutua.</div></div>
+<div id="messages" class="card chat" style="margin-top:11px"><div class="notice">Esta conversación está vacía. Cuando conectéis mutuamente, podréis empezar a hablar.</div></div>
+<div class="compose"><input id="input" placeholder="Escribe un mensaje…"><button class="send" onclick="send()">➤</button></div>
+<div class="attachments">
+<button class="toolbtn" onclick="pickGif()">GIF</button>
+<button class="toolbtn" onclick="pickPhoto()">📷 Foto</button>
+<button class="toolbtn" onclick="toggleAudio()">🎙 Audio</button>
+<button class="toolbtn" onclick="pickFile()">📎 Archivo</button>
+<button class="toolbtn" onclick="openReactionPicker()">❤️ Reacción</button>
+<button class="toolbtn" onclick="openPoll()">▣ Encuesta</button>
+</div>
+<input id="gifInput" class="sr-only-file" type="file" accept="image/gif" onchange="attachGif(event)">
+<input id="photoInput" class="sr-only-file" type="file" accept="image/*" onchange="attachPhoto(event)">
+<input id="fileInput" class="sr-only-file" type="file" onchange="attachFile(event)">
+<div id="audioStatus" class="mut" style="margin-top:8px"></div>
+</section>
+
+<section id="map" class="screen">
+<div class="sec">MAPA ARX · EXPERIENCIAS, NO PERSONAS</div>
+<div class="map">
+<div class="mapinfo">🔐 Sin perfiles ni ubicaciones personales</div>
+<div class="drop-zone dz1" onclick="drop('Centro ARX')">✦<br><small>Drop</small></div>
+<div class="drop-zone dz2" onclick="drop('Zona Aurora')">✦<br><small>Drop</small></div>
+<div class="drop-zone dz3" onclick="drop('Paseo ARX')">✦<br><small>Drop</small></div>
+<div class="drop" style="left:57%;top:39%" onclick="drop('Centro ARX')">✦</div>
+<div class="map-privacy">Tu privacidad es prioridad: el mapa solo muestra Drops, eventos y zonas ARX. Nunca muestra dónde está una persona.</div>
+</div>
+<button class="btn" onclick="openEvent()">＋ Crear evento</button>
+<div class="sec">PRÓXIMOS EVENTOS</div><div id="events"></div>
+</section>
+
+<section id="drops" class="screen">
+<div class="drop-hero"><div class="drop-kicker">ARX DROPS · COLECCIÓN 3D</div><h1>Encuentra. Descubre. Colecciona.</h1><div class="mut">Los Drops no se consiguen con un toque. Las pistas pueden aparecer en ARX, WhatsApp o redes sociales y cada Drop solo entrega una figura 3D coleccionable.</div><div class="drop-actions"><button class="drop-action" onclick="drop('Centro ARX')">✦ Seguir una pista</button><button class="drop-action" onclick="show('map')">⌖ Ver zonas de búsqueda</button></div></div>
+<div class="sec">🧊 MI COLECCIÓN</div><div id="collectionList" class="collection-grid"></div>
+<div class="sec">🕵️ CÓMO ENCONTRAR UN DROP</div><div class="card"><div class="event"><b>1 · Busca la pista</b><div class="mut">Puede aparecer en la comunidad de WhatsApp o en nuestras redes.</div></div><div class="event"><b>2 · Encuentra el código</b><div class="mut">Puede estar escondido en una foto, vídeo, historia, canción o mensaje.</div></div><div class="event"><b>3 · Vuelve a ARX</b><div class="mut">Introduce el código y sigue la última pista.</div></div><div class="event"><b>4 · Consigue la figura</b><div class="mut">Solo entonces se desbloquea la figura 3D y pasa a tu colección.</div></div></div>
+<div id="vaultSection"></div>
+</section>
+
+<section id="garden" class="screen">
+<div class="hero"><div class="ey">ARX GARDEN</div><h1>Detalles que se quedan.</h1><div class="mut">Envía flores virtuales a tus conexiones y conviértelas en recuerdos coleccionables.</div><div class="balance"><span class="token-pill">✦ <span id="tokenBalance">120</span> tokens</span><button class="btn ghost" style="width:auto;margin-top:0" onclick="openTokenInfo()">¿Cómo conseguir?</button></div></div>
+<div class="sec">MI JARDÍN</div><div id="gardenList" class="garden"></div>
+<div class="sec">FLORES ARX</div><div class="flower-modal-grid">
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌹</div><b>Rosa Aurora</b><div class="mut">10 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌷</div><b>Tulipán</b><div class="mut">15 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌸</div><b>Sakura</b><div class="mut">25 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🪻</div><b>Lavanda Nocturna</b><div class="mut">30 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🥀</div><b>Rosa Obsidiana</b><div class="mut">50 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">✨</div><b>Flor Celestial</b><div class="mut">100 ✦</div></div>
+</div></section>
+<section id="calendar" class="screen"><div class="hero"><div class="ey">CALENDARIO ARX</div><h1>Que no se te olvide nadie.</h1><div class="mut">Cumpleaños y eventos privados con avisos configurables.</div></div><button class="btn" onclick="openBirthday()">＋ Añadir cumpleaños</button><div class="sec">AGOSTO 2026</div><div class="card"><div class="calendar" id="cal"></div></div><div class="sec">PRÓXIMOS AVISOS</div><div id="birthdays"><div class="notice">Todavía no hay cumpleaños añadidos.</div></div></section>
+
+<section id="missions" class="screen"><div class="hero"><div class="ey">MISIONES DE HOY</div><h1>Haz que pase algo.</h1><div class="mut">Completa pequeñas acciones y gana XP, flechazos y recompensas.</div></div><div class="sec">HOY</div><div class="notice">Las misiones aparecerán aquí cuando ARX las active.</div></section>
+<section id="notifications" class="screen"><div class="sec">NOTIFICACIONES</div><div class="notice">No tienes notificaciones nuevas.</div></section>
+<section id="groups" class="screen"><div class="sec">MIS CÍRCULOS</div><div class="hero"><div class="ey">COMUNIDAD</div><h1>Encuentra a las tuyas.</h1><div class="mut">Pequeños círculos para compartir intereses, planes y eventos.</div></div><div class="notice">Todavía no hay círculos creados.</div></section>
+<section id="profile" class="screen">
+<div class="profile-main card">
+  <div class="ey">MI ESPACIO ARX</div>
+  <div class="avatar-wrap">
+    <div id="profileAvatar" class="profile-avatar fallback">✦</div>
+    <button class="avatar-edit" onclick="chooseProfilePhoto()" aria-label="Cambiar foto">＋</button>
+  </div>
+  <div id="profileName" class="profile-name">Aoi</div>
+  <div class="mut">Tu espacio personal ARX</div>
+  <div id="profileBio" class="profile-bio">Mi plan perfecto es perderme por una ciudad nueva.</div>
+  <div id="profileInterests" class="tags" style="justify-content:center;margin-top:14px"></div>
+  <div class="profile-actions">
+    <button class="btn" onclick="editProfile()">✎ Editar perfil</button>
+    <button class="btn ghost" onclick="openInterests()">＋ Intereses</button>
+  </div>
+  <button class="btn ghost" style="max-width:430px;margin:10px auto 0;display:block" onclick="logout()">Cerrar sesión</button>
+</div>
+
+<div class="profile-section">
+  <div class="sec">MI COLECCIÓN</div>
+  <div class="grid"><div class="card"><div class="stat">3</div><div class="mut">Piezas</div></div><div class="card"><div class="stat">4</div><div class="mut">Logros</div></div></div>
+</div>
+
+<div id="founderPanel" class="card hidden" style="margin-top:18px"><div class="ey">ARX CONTROL</div><h2 style="margin:7px 0">Panel de fundadora ✦</h2><div class="mut">Acceso total al prototipo: comunidades, miembros, Drops, eventos, coleccionables y configuración.</div><button class="btn" onclick="openImprovements()">💡 Ver mejoras recibidas <span id="improvementCount">0</span></button></div>
+
+<div class="profile-section">
+  <div class="sec">MI JARDÍN Y COLECCIÓN</div>
+  <div class="card"><div class="row"><div class="mini">🎁</div><div><b>Drops & Vitrinas</b><div class="mut">Colección, rarezas y piezas 360°</div></div></div><button class="btn ghost" onclick="show('drops')">Entrar en mi colección →</button></div>
+  <div class="card" style="margin-top:11px"><div class="row"><div class="mini">🌹</div><div><b>Mi Jardín ARX</b><div class="mut">Flores virtuales y recuerdos recibidos</div></div></div><button class="btn ghost" onclick="show('garden')">Abrir jardín →</button></div>
+</div>
+
+<div class="profile-section">
+  <div class="sec">OPINIÓN DE LA COMUNIDAD</div>
+  <div class="card"><div class="row"><div class="mini">💡</div><div><b>¿Cómo podemos mejorar ARX?</b><div class="mut">Tu opinión ayuda a construir las próximas funciones.</div></div></div><button class="btn" onclick="openImprovementForm()">＋ Enviar una mejora</button></div>
+</div>
+
+
+<input id="profilePhotoInput" type="file" accept="image/*" hidden onchange="photoSelected(event)">
+</section>
+</main>
+<nav class="bottom"><button class="nav active" onclick="show('home')"><b>⌂</b>Inicio</button><button class="nav" onclick="show('discover')"><b>✦</b>Descubrir</button><button class="nav" onclick="show('matches')"><b>♡</b>Conexiones</button><button class="nav" onclick="show('map')"><b>⌖</b>Mapa</button><button class="nav" onclick="show('drops')"><b>✦</b>Drops</button><button class="nav" onclick="show('profile')"><b>◈</b>Perfil</button></nav><div style="display:none"></div>
+</div></div>
+
+<div id="modal" class="modal"><div class="modalbox"><button class="close" onclick="closeM()">✕</button><div id="modalContent"></div></div></div><div id="toast" class="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ARX_CONFIG_OK = !!(window.ARX_SUPABASE_URL && window.ARX_SUPABASE_KEY && !window.ARX_SUPABASE_URL.includes('PEGA_AQUI'));
+const arxSupabase = ARX_CONFIG_OK ? window.supabase.createClient(window.ARX_SUPABASE_URL, window.ARX_SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }) : null;
+let currentUser=null;
+let state=JSON.parse(localStorage.getItem('arx_v5_clean')||'{}'); state=Object.assign({code:"",logged:false,role:"member",community:"ARX",displayName:"",bio:"",photo:"",sent:[],matches:[],arrows:0,dailyClaim:"",improvements:[],missionClaimed:false,interests:[],tokens:0,flowers:[],events:[],dailyQuestionKey:"",dailyQuestionIndex:0,dailyAnswers:{},pendingConnections:[],collectedFigures:[],dropProgress:{},accountCreated:false},state); if(!Array.isArray(state.improvements))state.improvements=[]; if(!Array.isArray(state.interests))state.interests=[]; if(!Array.isArray(state.flowers))state.flowers=[]; if(!Array.isArray(state.events))state.events=[]; if(!Array.isArray(state.pendingConnections))state.pendingConnections=[]; if(!Array.isArray(state.collectedFigures))state.collectedFigures=[]; if(!state.dailyAnswers||typeof state.dailyAnswers!=='object')state.dailyAnswers={}; if(!state.dropProgress||typeof state.dropProgress!=='object')state.dropProgress={}; if(typeof state.tokens!=='number')state.tokens=0;
+function save(){localStorage.setItem('arx_v5_clean',JSON.stringify(state));if($('sentCount'))$('sentCount').textContent=state.sent.length;if($('matchCount'))$('matchCount').textContent=state.matches.length;if($('arrowBalance'))$('arrowBalance').textContent=state.arrows||0;if($('improvementCount'))$('improvementCount').textContent=state.improvements.length;if($('tokenBalance'))$('tokenBalance').textContent=state.tokens||0;renderInterests();renderGarden();renderEvents();renderProfile();renderDiscover();renderDrops();}
+function showAuthError(message){const el=$('loginError');if(el)el.textContent=message||''}
+
+async function sendMagicLink(){
+  const email=($('loginEmail')?.value||'').trim().toLowerCase();
+  showAuthError('');
+  if(!email){showAuthError('Introduce tu email.');return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthError('Introduce un email válido.');return}
+  if(!arxSupabase){showAuthError('ARX no está conectado con Supabase. Revisa arx-config.js.');return}
+  const btn=document.querySelector('.login-btn');
+  if(btn){btn.disabled=true;btn.textContent='Enviando enlace…'}
+  try{
+    const {error}=await arxSupabase.auth.signInWithOtp({
+      email,
+      options:{emailRedirectTo:'https://aoi9j.github.io/arxapp/',shouldCreateUser:true}
+    });
+    if(error)throw error;
+    showAuthError('✦ Enlace enviado. Revisa tu correo y pulsa el enlace para volver a ARX.');
+  }catch(e){
+    const msg=String(e?.message||e||'No se pudo enviar el enlace.');
+    showAuthError(/load failed|failed to fetch|network/i.test(msg)?'No se puede conectar con Supabase. Comprueba tu conexión.':msg);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Enviarme el enlace'}
+  }
+}
+
+function showArxCodeStep(){
+  const login=document.querySelector('#gate .login');if(!login)return;
+  login.innerHTML='<div class="mark">ARX</div><div class="lock">⌁</div><h1>Una última llave</h1><p>Tu email está verificado. Introduce tu código de acceso ARX para entrar.</p><div class="form" style="text-align:left"><label>CÓDIGO ARX<input id="arxAccessCode" type="password" autocomplete="off" placeholder="ARX-MEMBER-1702"></label><button class="primary login-btn" type="button" onclick="verifyArxAccessCode()">Entrar en ARX</button></div><div id="loginError" class="error"></div><div class="privacy">ARX-MEMBER-1702 · ARX-FUNDADORA</div>';
+}
+
+async function verifyArxAccessCode(){
+  const code=($('arxAccessCode')?.value||'').trim().toUpperCase();showAuthError('');
+  if(code!=='ARX-MEMBER-1702'&&code!=='ARX-FUNDADORA'){showAuthError('Código ARX incorrecto.');return}
+  if(!arxSupabase){showAuthError('ARX no está conectado con Supabase.');return}
+  try{
+    const {data,error}=await arxSupabase.auth.updateUser({data:{arx_access:true,role:code==='ARX-FUNDADORA'?'founder':'member',display_name:code==='ARX-FUNDADORA'?'Aoi':''}});
+    if(error)throw error;
+    currentUser=data.user;
+    await finishAuth(currentUser);
+    toast(code==='ARX-FUNDADORA'?'Bienvenida, Aoi ✦':'Bienvenida a ARX ♡');
+  }catch(e){showAuthError(e?.message||'No se pudo validar el acceso.')}
+}
+
+async function finishAuth(user){
+  if(!user)return;
+  currentUser=user;state.logged=true;state.role=user.user_metadata?.role==='founder'?'founder':'member';state.accountCreated=true;
+  try{
+    const {data:profile}=await arxSupabase.from('profiles').select('display_name,bio,avatar_url,interests').eq('id',user.id).maybeSingle();
+    if(profile){state.displayName=profile.display_name||user.user_metadata?.display_name||'';state.bio=profile.bio||user.user_metadata?.bio||'';state.photo=profile.avatar_url||'';state.interests=Array.isArray(profile.interests)?profile.interests:[]}
+    else{state.displayName=user.user_metadata?.display_name||'';state.bio=user.user_metadata?.bio||'';state.photo=''}
+  }catch(_){}
+  save();$('gate').style.display='none';$('app').style.display='block';applyRoleUI();
+}
+
+async function logout(){
+  try{if(arxSupabase)await arxSupabase.auth.signOut()}catch(_){}
+  currentUser=null;state.logged=false;state.role='member';state.displayName='';state.bio='';state.photo='';state.interests=[];save();
+  $('app').style.display='none';$('gate').style.display='grid';
+  $('gate').innerHTML='<div class="login"><div class="mark">ARX</div><div class="lock">⌁</div><h1>Tu espacio privado</h1><p>Introduce tu email y ARX te enviará un enlace seguro. Después necesitarás tu código ARX.</p><div class="form" style="text-align:left"><label>EMAIL<input id="loginEmail" type="email" autocomplete="email" inputmode="email" placeholder="tu@email.com"></label><button class="primary login-btn" type="button" onclick="sendMagicLink()">Enviarme el enlace</button></div><div id="loginError" class="error"></div><div class="privacy">COMUNIDAD PRIVADA · EMAIL VERIFICADO · CÓDIGO ARX</div></div>';
+}
+
+async function bootAuth(){
+  $('gate').style.display='grid';$('app').style.display='none';
+  if(!arxSupabase){showAuthError('ARX no está conectado con Supabase. Revisa arx-config.js.');return}
+  try{
+    const {data:{session}}=await arxSupabase.auth.getSession();
+    if(session?.user){currentUser=session.user;if(currentUser.user_metadata?.arx_access)await finishAuth(currentUser);else showArxCodeStep()}
+  }catch(_){showAuthError('No se pudo comprobar la sesión.')}
+  arxSupabase.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_IN'&&session?.user){currentUser=session.user;if(currentUser.user_metadata?.arx_access)finishAuth(currentUser);else showArxCodeStep()}
+    if(event==='SIGNED_OUT'){currentUser=null;state.logged=false;$('app').style.display='none';$('gate').style.display='grid'}
+  });
+}
+
+function showInstallHelp(){openM('<div class="ey">ARX · APP</div><h2>Añadir ARX al móvil</h2><div class="event"><b>iPhone / iPad</b><div class="mut">Abre ARX en Safari → Compartir → Añadir a pantalla de inicio.</div></div><div class="event"><b>Android</b><div class="mut">Abre ARX en Chrome → menú ⋮ → Instalar aplicación / Añadir a pantalla de inicio.</div></div><div class="mut" style="margin-top:10px">ARX incluye soporte PWA para que pueda instalarse como una app cuando esté publicada en HTTPS.</div>')}
+function applyRoleUI(){
+  const fp=$('founderPanel'); if(fp) fp.classList.toggle('hidden',state.role!=='founder');
+  const badge=document.querySelector('.private');
+  if(state.role==='founder'){
+    badge.textContent='✦ FUNDADORA · ACCESO TOTAL';
+    badge.style.borderColor='#ff4fa366';
+  }else{
+    badge.textContent='⌁ COMUNIDAD PRIVADA';
+  }
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
+  const target=$(id); if(!target)return; target.classList.add('on');
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  const nav=[...document.querySelectorAll('.nav')].find(n=>n.getAttribute('onclick')===`show(\'${id}\')`);
+  if(nav)nav.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeM(){ $('modal').classList.remove('on'); }
+function openM(html){ $('modalContent').innerHTML=html; $('modal').classList.add('on'); }
+function openImprovementForm(){openM('<div class="ey">BUZÓN ARX</div><h2>Ayúdanos a mejorar ✦</h2><div class="mut">Cuéntanos qué cambiarías, qué función te gustaría añadir o qué parte no te convence.</div><div class="form" style="margin-top:14px"><label>TIPO DE MEJORA<select id="impType"><option>✨ Nueva función</option><option>🎨 Diseño / experiencia</option><option>🐛 Algo no funciona</option><option>💡 Otra idea</option></select></label><label>TU IDEA<textarea id="impText" placeholder="Escribe tu propuesta…"></textarea></label><button class="btn" onclick="submitImprovement()">Enviar mejora</button></div>')}
+function submitImprovement(){const text=$('impText').value.trim();if(!text){toast('Cuéntanos primero tu mejora');return}state.improvements.unshift({type:$('impType').value,text,date:new Date().toLocaleString('es-ES')});save();closeM();toast('¡Gracias! Tu mejora ha sido enviada ✦')}
+function openImprovements(){
+  if(state.role!=='founder'){toast('Solo la fundadora puede ver este buzón');return}
+  const items=state.improvements.length
+    ? state.improvements.map(x=>'<div class="event"><b>'+x.type+'</b><div class="mut" style="margin-top:5px">'+String(x.text).replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div><div class="mut" style="margin-top:6px;font-size:9px">'+x.date+'</div></div>').join('')
+    : '<div class="notice">Todavía no hay mejoras enviadas.</div>';
+  openM('<div class="ey">ARX CONTROL</div><h2>Mejoras de la comunidad</h2><div class="mut">Aquí puedes leer todas las propuestas enviadas por las usuarias.</div><div style="margin-top:12px">'+items+'</div>');
+}
+function openNotifications(){show('notifications');$('notifBadge').style.display='none'}
+function claimMission(){if(state.missionClaimed){toast('Ya has reclamado la recompensa de hoy');return}state.missionClaimed=true;save();toast('+100 XP · misión completada ✦')}
+const arxQuestions=[
+'¿Cuál sería tu domingo perfecto?',
+'¿Qué pequeño detalle consigue alegrarte un día malo?',
+'¿Dónde te irías mañana si pudieras viajar gratis?',
+'¿Qué canción describe tu semana?',
+'¿Qué cosa absurda defenderías hasta la muerte?',
+'¿Qué lugar te hace sentir en casa?',
+'¿Qué plan te parece perfecto para conocer a alguien?',
+'¿Qué sueño todavía tienes pendiente?',
+'¿Qué película puedes ver mil veces?',
+'¿Qué valoras más cuando conoces a alguien?',
+'¿Mar, montaña o ciudad?',
+'¿Qué te gustaría aprender algún día?',
+'¿Cuál es tu pequeño placer culpable?',
+'¿Qué harías con un día completamente libre?',
+'¿Qué viaje nunca olvidarás?',
+'¿Qué gesto te hace confiar en alguien?'
+];
+const discoverPeople=[];
+function dailyQuestionKey(){return Math.floor(Date.now()/86400000)}
+function renderDiscover(){
+ const key=dailyQuestionKey(); const q=arxQuestions[key%arxQuestions.length];
+ $('dailyQuestion').textContent=q; $('questionDate').textContent='PREGUNTA · '+new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long'});
+ const ans=state.dailyAnswers[key]; if(ans){$('dailyAnswer').value=ans.text||'';$('dailyAnswer').disabled=true;$('answerStatus').textContent='✓ Tu respuesta está publicada para la comunidad.';$('dailyAnswer').style.opacity='.65'}else{$('dailyAnswer').disabled=false;$('answerStatus').textContent=''}
+ const el=$('dailyAnswers'); if(el){el.innerHTML='<div class="notice">Todavía no hay respuestas de la comunidad para mostrar.</div>'}
+}
+function saveDailyAnswer(){const key=dailyQuestionKey();if(state.dailyAnswers[key]){toast('Ya has respondido la pregunta de hoy');return}const text=$('dailyAnswer').value.trim();if(text.length<3){toast('Escribe una respuesta antes de publicar');return}state.dailyAnswers[key]={text,date:new Date().toISOString()};save();renderDiscover();toast('Respuesta publicada ✦')}
+function surpriseMe(){if(!discoverPeople.length){toast('Todavía no hay perfiles disponibles para descubrir.');return}const p=discoverPeople[Math.floor(Math.random()*discoverPeople.length)];const common=p.interests.slice(0,3);openM('<div class="ey">✦ EL DESCUBRIMIENTO DE HOY</div><h2>ARX ha encontrado algo</h2><div class="card" style="margin-top:12px"><div class="row"><div class="mini">✦</div><div><b>'+esc(p.name)+'</b><div class="mut">Perfil público · ubicación privada</div></div></div><div class="tags">'+common.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="mut" style="margin-top:12px"><b>Lo que os une:</b><br>'+esc(p.prompt)+'</div></div><button class="btn" onclick="openDiscoveryProfile(\''+p.id+'\')">Descubrir su mundo</button>');}
+function getPerson(id){return discoverPeople.find(p=>p.id===id)||discoverPeople[0]}
+function openDiscoveryProfile(id){const p=getPerson(id);const connected=state.matches.includes(p.id);const pending=state.pendingConnections.includes(p.id);closeM();openM('<div class="ey">PERFIL PÚBLICO · PRIVACIDAD ARX</div><h2>'+esc(p.name)+' · '+p.age+'</h2><div class="mut">📍 Ubicación privada · Solo muestra lo que ha decidido compartir</div><div class="tags">'+p.interests.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="card" style="margin-top:12px"><b>Bio</b><div class="mut" style="margin-top:6px">'+esc(p.bio)+'</div></div><div class="card" style="margin-top:10px"><b>Respuesta de hoy</b><div style="margin-top:6px">“'+esc(p.prompt)+'”</div></div>'+(connected?'<button class="btn" onclick="closeM();show(\'privateChat\')">💬 Abrir chat · Conexión mutua</button>':pending?'<button class="btn ghost" disabled>⌁ Conexión enviada · esperando respuesta</button>':'<button class="btn" onclick="sendConnection(\''+p.id+'\')">✦ Enviar conexión</button><button class="btn ghost" onclick="openFlowerPicker(\''+esc(p.name)+'\')">🌹 Dejar una flor</button>'))}function sendConnection(id){if(state.pendingConnections.includes(id)){toast('Ya has enviado esta conexión');return}state.pendingConnections.push(id);save();closeM();toast('Solicitud enviada. El chat queda cerrado hasta que sea mutua ✦')}function discoverFromAnswer(id){openDiscoveryProfile(id)}
+function arrow(name){
+  if((state.arrows||0)<=0){toast('No tienes conexiones disponibles');return}
+  if(state.sent.includes(name)){toast('Ya has enviado una conexión');return}
+  state.arrows--; state.sent.push(name); save();
+  $('arrowList')?.remove(); toast('Solicitud de conexión enviada ✦');
+}
+function send(){let i=$('input'),t=i.value.trim();if(!t)return;appendTextMessage(t,true);i.value=''}
+function appendTextMessage(t,me=false){let m=document.createElement('div');m.className='msg'+(me?' me':'');m.textContent=t;$('messages').appendChild(m);$('messages').scrollTop=$('messages').scrollHeight}
+function pickGif(){$('gifInput').click()}
+function attachGif(e){const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);let m=document.createElement('div');m.className='msg me media-msg';let img=document.createElement('img');img.src=url;img.alt='GIF';m.appendChild(img);$('messages').appendChild(m);e.target.value='';toast('GIF añadido al chat')}
+function pickPhoto(){$('photoInput').click()}
+function attachPhoto(e){const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);let m=document.createElement('div');m.className='msg me media-msg';let img=document.createElement('img');img.src=url;img.alt='Foto';m.appendChild(img);$('messages').appendChild(m);e.target.value='';toast('Foto añadida al chat')}
+function pickFile(){$('fileInput').click()}
+function attachFile(e){const f=e.target.files[0];if(!f)return;appendTextMessage('📎 '+f.name,true);e.target.value='';toast('Archivo adjuntado')}
+let mediaRecorder=null,audioChunks=[];
+async function toggleAudio(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();return}if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){toast('Tu navegador no permite grabar audio aquí');return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});audioChunks=[];mediaRecorder=new MediaRecorder(stream);$('audioStatus').textContent='🔴 Grabando… pulsa Audio otra vez para terminar';mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(audioChunks,{type:'audio/webm'});const url=URL.createObjectURL(blob);let m=document.createElement('div');m.className='msg me audio-msg';m.innerHTML='🎙 <audio controls src="'+url+'"></audio>';$('messages').appendChild(m);$('audioStatus').textContent='';toast('Audio enviado al chat')};mediaRecorder.start()}catch(e){$('audioStatus').textContent='';toast('Necesitas permitir el micrófono')}
+}
+function openReactionPicker(){openM('<div class="ey">CHAT ARX</div><h2>Enviar reacción</h2><div class="tags" style="margin-top:14px">'+['❤️','😂','😍','✨','🔥','🫶','🥹','🌹'].map(x=>'<button class="toolbtn" onclick="appendTextMessage(\''+x+'\',true);closeM()">'+x+'</button>').join('')+'</div>')}
+function openPoll(){openM('<div class="ey">CHAT ARX</div><h2>Crear encuesta</h2><div class="form"><label>PREGUNTA<input id="pollQ" placeholder="¿Qué hacemos este finde?"></label><label>OPCIÓN 1<input id="poll1" placeholder="Café"></label><label>OPCIÓN 2<input id="poll2" placeholder="Paseo"></label><button class="btn" onclick="sendPoll()">Enviar encuesta</button></div>')}
+function sendPoll(){const q=$('pollQ').value||'¿Qué hacemos?';const a=$('poll1').value||'Opción 1';const b=$('poll2').value||'Opción 2';openM('');closeM();let m=document.createElement('div');m.className='msg me';m.innerHTML='<b>▣ '+q+'</b><div class="tags"><button class="toolbtn" onclick="toast(\'Votaste por '+a+'\')">'+a+'</button><button class="toolbtn" onclick="toast(\'Votaste por '+b+'\')">'+b+'</button></div>';$('messages').appendChild(m)}
+function openPlan(person){openM('<div class="ey">PLAN ARX · '+person+'</div><h2>¿Qué os apetece?</h2><div class="flower-modal-grid"><button class="flower-choice" onclick="sendPlan(\'☕ Café\');closeM()">☕ Café</button><button class="flower-choice" onclick="sendPlan(\'🎬 Cine\');closeM()">🎬 Cine</button><button class="flower-choice" onclick="sendPlan(\'🚶 Paseo\');closeM()">🚶 Paseo</button><button class="flower-choice" onclick="sendPlan(\'🎮 Gaming\');closeM()">🎮 Gaming</button></div>')}
+function sendPlan(plan){appendTextMessage('✦ Propongo un plan: '+plan,true);toast('Propuesta enviada')}
+function drop(zone='Zona ARX'){
+  const key='drop-'+zone.replace(/\W/g,'').toLowerCase();
+  const progress=state.dropProgress[key]||{stage:0,found:false};
+  const stages=[
+    {title:'Pista 1 · La comunidad',text:'La primera pista no está dentro de ARX. Revisa la comunidad de WhatsApp o la publicación de ARX en redes sociales.'},
+    {title:'Pista 2 · Código escondido',text:'Busca un código oculto en una imagen, vídeo, historia o mensaje de ARX. Introduce el código para avanzar.'},
+    {title:'Pista 3 · Última pieza',text:'La última pista puede estar dentro de ARX. Resuelve el pequeño acertijo para encontrar la figura.'}
+  ];
+  if(progress.found){openM('<div class="ey">ARX DROP</div><h2>Ya has conseguido este Drop ✦</h2><div class="mut">Esta zona guarda una figura que ya forma parte de tu colección.</div>');return}
+  const st=stages[Math.min(progress.stage,stages.length-1)];
+  let html='<div class="ey">ARX DROP · '+esc(zone)+'</div><h2>'+st.title+'</h2><div class="mut">'+st.text+'</div><div class="drop-clue"><b>🔎 Objetivo</b><div class="mut" style="margin-top:6px">No damos coordenadas exactas. Los Drops se encuentran mediante pistas, nunca mediante la ubicación de personas.</div></div>';
+  if(progress.stage===0) html+='<button class="btn" onclick="advanceDrop(\''+esc(key)+'\')">He encontrado la pista</button>';
+  else if(progress.stage===1) html+='<div class="form" style="margin-top:12px"><label>CÓDIGO ENCONTRADO<input id="dropCode" class="code-box" placeholder="ARX-XXXX"></label><button class="btn" onclick="checkDropCode(\''+esc(key)+'\')">Comprobar código</button></div>';
+  else html+='<div class="form" style="margin-top:12px"><label>ÚLTIMA PISTA<textarea id="dropAnswer" placeholder="¿Qué crees que esconde ARX?"></textarea></label><button class="btn" onclick="solveDrop(\''+esc(key)+'\')">Resolver Drop</button></div>';
+  openM(html);
+}
+function advanceDrop(key){state.dropProgress[key]={stage:1,found:false};save();closeM();drop(key.replace('drop-',''));}
+function checkDropCode(key){const code=($('dropCode').value||'').trim().toUpperCase();const valid=['ARX-AURORA','ARX-7K92','ARX-ORBIT'];if(!valid.includes(code)){toast('Código incorrecto. Busca la pista en la comunidad o redes ✦');return}state.dropProgress[key]={stage:2,found:false};save();closeM();drop(key.replace('drop-',''));}
+function solveDrop(key){const answer=($('dropAnswer').value||'').trim();if(answer.length<4){toast('Necesitas completar la última pista');return}state.dropProgress[key]={stage:3,found:false};save();claimDropFigure(key);}
+function claimDropFigure(key){const figureId='ARX-DROP-'+key.replace('drop-','').toUpperCase();if(state.collectedFigures.includes(figureId)){state.dropProgress[key].found=true;save();toast('Esta figura ya está en tu colección');closeM();return}state.collectedFigures.unshift(figureId);state.dropProgress[key]={stage:3,found:true};save();openM('<div class="ey">DROP DESBLOQUEADO</div><h2>🎉 Has encontrado una figura 3D</h2><div class="viewer"><div class="big3d">🦋</div></div><div class="mut">La figura es la única recompensa de este Drop. Se ha añadido a tu colección.</div><button class="btn" onclick="closeM();show(\'drops\')">Ver mi colección</button>')}
+function figure(e,r,d){openM('<div class="ey">FIGURA 3D</div><h2>'+r+'</h2><div class="mut">Coleccionable ARX · '+d+'</div><div class="viewer"><div class="big3d">'+e+'</div></div>')}
+function openEvent(){openM('<div class="ey">NUEVO EVENTO</div><h2>Crear experiencia ARX</h2><div class="mut">Publica una quedada sin mostrar la ubicación de ninguna persona.</div><div class="form"><label>NOMBRE<input id="evName" placeholder="Nombre del evento"></label><label>FECHA<input id="evDate" type="date"></label><label>HORA<input id="evTime" type="time"></label><label>ZONA<input id="evPlace" placeholder="Zona o lugar general"></label><label>AFORO MÁXIMO<input id="evMax" type="number" min="2" value="10"></label><label>DESCRIPCIÓN<textarea id="evDesc" placeholder="Cuenta de qué va el plan..."></textarea></label><button class="btn" onclick="createEvent()">Publicar evento</button></div>')}
+function createEvent(){let ev={id:Date.now(),name:$('evName').value.trim()||'Nuevo evento',date:$('evDate').value||'Fecha por confirmar',time:$('evTime').value||'Hora por confirmar',place:$('evPlace').value.trim()||'Zona ARX',max:parseInt($('evMax').value||10),desc:$('evDesc').value.trim(),attending:false};state.events.unshift(ev);save();closeM();toast('Evento publicado ✦');show('map')}
+function renderDrops(){
+ const el=$('collectionList'); if(!el)return;
+ if(!state.collectedFigures.length){el.innerHTML='<div class="notice">Tu colección está vacía. Cuando consigas una figura 3D mediante un Drop aparecerá aquí.</div>';}
+ else {el.innerHTML=state.collectedFigures.map(id=>{const icon=id.includes('AURORA')?'🦋':id.includes('ZONAAURORA')?'🪐':'🌙';return '<div class="figure" onclick="figure(\''+icon+'\',\'Figura coleccionable\',\'Hoy\')"><div class="rare">3D</div><div class="toy">'+icon+'</div><div class="date">Coleccionada</div></div>'}).join('');}
+ const vault=$('vaultSection');
+ if(vault){if(state.collectedFigures.length){vault.innerHTML='<div class="sec">VITRINA 360°</div><div class="vault"><div class="vault-top"><div><div class="vault-title">Vitrina ARX</div><div class="mut">Tu figura 3D desbloqueada</div></div><span class="vault-badge">DESBLOQUEADA</span></div><div class="viewer-premium"><div class="big3d">🦋</div></div><div class="vault-controls"><button onclick="toast(\'Vista 360° activa ✦\')">↻ 360°</button><button onclick="toast(\'Zoom de vitrina\')">＋ Zoom</button><button onclick="toast(\'Pieza destacada\')">✦ Destacar</button></div></div>';}else vault.innerHTML='';}
+}
+function renderEvents(){const el=$('events');if(!el)return;const arr=state.events.length?state.events:[];el.innerHTML=arr.map(ev=>'<div class="event"><b>✦ '+esc(ev.name)+'</b><div class="mut">'+esc(ev.date)+' · '+esc(ev.time)+' · '+esc(ev.place)+' · hasta '+ev.max+' personas</div>'+(ev.desc?'<div class="mut" style="margin-top:6px">'+esc(ev.desc)+'</div>':'')+'<button class="btn ghost event-attend" onclick="attendEvent('+ev.id+')">'+(ev.attending?'✓ Vas a asistir':'Me apunto')+'</button></div>').join('')||'<div class="notice">Todavía no hay eventos creados. Sé la primera en organizar uno.</div>'}
+function attendEvent(id){const ev=state.events.find(x=>x.id===id);if(!ev)return;ev.attending=!ev.attending;save();toast(ev.attending?'Te has apuntado al evento ✦':'Has cancelado tu asistencia')}
+function esc(v){return String(v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function openInterests(){const opts=['✈ Viajes','☕ Cafés','🎮 Gaming','♫ Indie','🎬 Cine','🎨 Arte','🏃 Deporte','🍳 Cocina','🌿 Naturaleza','📚 Libros','🎧 Música','🐾 Animales','🎮 Juegos','✈️ Escapadas','🌙 Nocturna','☀️ Madrugadora'];openM('<div class="ey">MI PERFIL</div><h2>Elige tus intereses</h2><div class="mut">Selecciona todos los que quieras. Se mostrarán en tu perfil y ayudarán a personalizar Descubrir.</div><div id="interestPicker" class="interest-picker">'+opts.map(o=>'<button class="tag interest-option '+(state.interests.includes(o)?'selected':'')+'" data-interest="'+esc(o)+'" onclick="this.classList.toggle(\'selected\')">'+o+'</button>').join('')+'</div><button class="btn" onclick="saveInterests()">Guardar intereses</button>')}
+async function saveInterests(){const interests=[...document.querySelectorAll('#interestPicker .interest-option.selected')].map(x=>x.dataset.interest);if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}const {error}=await arxSupabase.from('profiles').update({interests}).eq('id',currentUser.id);if(error){toast('No se pudieron guardar los intereses');return}state.interests=interests;save();closeM();toast('Intereses guardados ✦')}
+function chooseProfilePhoto(){$('profilePhotoInput').click()}
+async function photoSelected(e){const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Selecciona una imagen');return}if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}if(f.size>5*1024*1024){toast('La foto debe pesar menos de 5 MB');return}const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=currentUser.id+'/avatar.'+ext;const {error:uploadError}=await arxSupabase.storage.from('avatars').upload(path,f,{upsert:true,contentType:f.type});if(uploadError){toast('No se pudo subir la foto: '+uploadError.message);return}const {data}=arxSupabase.storage.from('avatars').getPublicUrl(path);const url=data.publicUrl+'?v='+Date.now();const {error:dbError}=await arxSupabase.from('profiles').update({avatar_url:url}).eq('id',currentUser.id);if(dbError){toast('Foto subida, pero no se pudo guardar el perfil');return}state.photo=url;save();toast('Foto de perfil actualizada ✦')}
+function editProfile(){openM('<div class="ey">MI ESPACIO ARX</div><h2>Editar perfil</h2><div class="profile-edit"><label>Tu nombre<input id="editName" maxlength="30" value="'+esc(state.displayName||'Aoi')+'" placeholder="El nombre que quieras mostrar"></label><label>Tu biografía<textarea id="editBio" maxlength="220" placeholder="Cuéntale a ARX un poco sobre ti…">'+esc(state.bio||'')+'</textarea></label><button class="btn" onclick="saveProfile()">Guardar cambios</button></div>')}
+async function saveProfile(){const n=$('editName').value.trim(),b=$('editBio').value.trim();if(!n){toast('El nombre no puede estar vacío');return}if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}const {error:authError}=await arxSupabase.auth.updateUser({data:{display_name:n,bio:b}});if(authError){toast('No se pudo actualizar la cuenta');return}const {error}=await arxSupabase.from('profiles').update({display_name:n,bio:b}).eq('id',currentUser.id);if(error){toast('No se pudo guardar el perfil');return}state.displayName=n;state.bio=b;save();closeM();toast('Perfil actualizado ✦')}
+function renderProfile(){const name=state.displayName||'Aoi';if($('profileName'))$('profileName').textContent=name;if($('homeName'))$('homeName').textContent=name||'Tu nombre';if($('profileBio'))$('profileBio').textContent=state.bio||'';const av=$('profileAvatar');if(av){if(state.photo){av.classList.remove('fallback');av.innerHTML='<img src="'+state.photo.replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'}else{av.classList.add('fallback');av.innerHTML='✦'}}const hav=$('homeAvatar');if(hav){if(state.photo){hav.innerHTML='<img src="'+state.photo.replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'}else{hav.innerHTML='<div class="fallback">✦</div>'}}}
+function renderInterests(){const html=(state.interests||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')||'<span class="mut">Todavía no has elegido intereses.</span>';if($('profileInterests'))$('profileInterests').innerHTML=html;if($('homeInterests'))$('homeInterests').innerHTML=html}
+function openFlowerPicker(person='una conexión'){const flowers=[['🌹','Rosa Aurora',10],['🌷','Tulipán',15],['🌸','Sakura',25],['🪻','Lavanda Nocturna',30],['🥀','Rosa Obsidiana',50],['✨','Flor Celestial',100]];openM('<div class="ey">ARX GIFT</div><h2>Enviar una flor a '+esc(person)+'</h2><div class="mut">Saldo actual: <b>✦ '+state.tokens+' tokens</b></div><div class="flower-modal-grid">'+flowers.map(f=>'<button class="flower-choice" onclick="sendFlower(\''+f[0]+'\',\''+f[1]+'\','+f[2]+',\''+esc(person)+'\')"><div class="flower-3d">'+f[0]+'</div><b>'+f[1]+'</b><div class="mut">'+f[2]+' ✦</div></button>').join('')+'</div>')}
+function sendFlower(icon,name,cost,person){if(state.tokens<cost){toast('No tienes suficientes tokens');return}state.tokens-=cost;state.flowers.unshift({icon,name,cost,person,date:new Date().toLocaleDateString('es-ES')});save();closeM();toast(icon+' '+name+' enviada a '+person+' ✦')}
+function renderGarden(){const el=$('gardenList');if(!el)return;el.innerHTML=state.flowers.map(f=>'<div class="flower-card"><div class="flower-3d">'+esc(f.icon)+'</div><b>'+esc(f.name)+'</b><div class="mut">De: '+esc(f.person)+'</div><div class="mut">'+esc(f.date)+'</div></div>').join('')||'<div class="notice" style="grid-column:1/-1">Tu jardín está vacío. Envía o recibe tu primera flor ARX 🌹</div>'}
+function openTokenInfo(){openM('<div class="ey">TOKENS ARX</div><h2>Cómo conseguir tokens ✦</h2><div class="event"><b>🎯 Misiones</b><div class="mut">Completa misiones y recibe recompensas.</div></div><div class="event"><b>🎉 Eventos</b><div class="mut">Participa en actividades de la comunidad.</div></div><div class="event"><b>📅 Constancia</b><div class="mut">Premios por actividad y participación.</div></div>')}
+function openBirthday(){openM('<div class="ey">CALENDARIO</div><h2>Añadir cumpleaños</h2><div class="form"><label>NOMBRE<input id="bName" placeholder="Nombre"></label><label>FECHA<input id="bDate" type="date"></label><label>AVISO<select id="bNotice"><option>El mismo día</option><option>1 día antes</option><option selected>7 días antes</option><option>30 días antes</option></select></label><button class="btn" onclick="createBirthday()">Guardar cumpleaños</button></div>')}
+function createBirthday(){let n=$('bName').value||'Cumpleaños',d=$('bDate').value||'Fecha por confirmar',a=$('bNotice').value;$('birthdays').insertAdjacentHTML('afterbegin','<div class="event"><b>🎂 '+n+'</b><div class="mut">'+d+' · Aviso: '+a+'</div></div>');closeM();toast('Cumpleaños guardado')}
+function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
+function renderCal(){let c=$('cal'),d=['L','M','X','J','V','S','D'];c.innerHTML=d.map(x=>'<div class="day"><b>'+x+'</b></div>').join('');for(let i=1;i<=31;i++)c.innerHTML+='<div class="day '+(i===18?'eventday':'')+'">'+i+'</div>'}renderCal();
+save();
+
+window.addEventListener('DOMContentLoaded',()=>{
+  $('gate').style.display='grid';$('app').style.display='none';
+  if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
+  if('caches' in window)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});
+  bootAuth();
+});
+</script>
+</body>
+</html>
