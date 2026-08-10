@@ -14,6 +14,9 @@
 window.ARX_SUPABASE_URL = "https://hxpflyblflfimifeuwcvz.supabase.co";
 window.ARX_SUPABASE_KEY = "sb_publishable_OQjVeuUA0ukwLs-klalLAg_jOXa2E7t";
 </script>
+<script>
+(async()=>{try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const reg of regs)await reg.unregister();}if('caches' in window){const keys=await caches.keys();for(const key of keys)await caches.delete(key);}}catch(e){}})();
+</script>
 <title>ARX</title>
 <style>
 :root{--bg:#07070b;--card:#111117dd;--line:#ffffff18;--txt:#f8f5fa;--mut:#aaa5b5;--p:#ff4fa3;--v:#8068ff;--c:#63e8ff;--g:#62dfa0}
@@ -40,7 +43,7 @@ button,input{font:inherit}button{cursor:pointer}
 .vault-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.vault-controls button{border:1px solid #ffffff18;background:#ffffff07;color:#cfc8d6;border-radius:12px;padding:9px;font-size:9px}
 @media(max-width:420px){.drop-grid{grid-template-columns:1fr}.drop-actions{grid-template-columns:1fr 1fr}.viewer-premium{height:290px}}
 .bottom{position:fixed;z-index:30;bottom:0;left:50%;transform:translateX(-50%);width:min(570px,100%);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#08080ddd;backdrop-filter:blur(22px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr)}.nav{background:transparent;border:0;color:#807b89;font-size:9px;padding:6px}.nav b{display:block;font-size:19px;margin-bottom:3px}.nav.active{color:white}
-.modal{display:none;position:fixed;inset:0;background:#000d;z-index:50;place-items:center;padding:15px}.modal.on{display:grid}.modalbox{width:min(510px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#19131f,#0d0e15);border:1px solid var(--line);border-radius:30px;padding:18px}.close{float:right;border:0;background:#fff1;color:white;border-radius:12px;padding:9px}.toast{position:fixed;z-index:80;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;background:#17151ddd;border:1px solid var(--line);padding:11px 15px;border-radius:99px;font-size:11px;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}.notice{padding:11px;border-radius:15px;background:#63e8ff0b;border:1px solid #63e8ff22;font-size:10px;color:#c8eaf1}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{padding:8px 2px;text-align:center;border-radius:10px;background:#ffffff06;font-size:10px}.eventday{background:#ff4fa31a;border:1px solid #ff4fa355}.hidden{display:none!important}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:2000;place-items:center;padding:15px}.modal.on{display:grid}.modalbox{width:min(510px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#19131f,#0d0e15);border:1px solid var(--line);border-radius:30px;padding:18px}.close{float:right;border:0;background:#fff1;color:white;border-radius:12px;padding:9px}.toast{position:fixed;z-index:80;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;background:#17151ddd;border:1px solid var(--line);padding:11px 15px;border-radius:99px;font-size:11px;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}.notice{padding:11px;border-radius:15px;background:#63e8ff0b;border:1px solid #63e8ff22;font-size:10px;color:#c8eaf1}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{padding:8px 2px;text-align:center;border-radius:10px;background:#ffffff06;font-size:10px}.eventday{background:#ff4fa31a;border:1px solid #ff4fa355}.hidden{display:none!important}
 
 /* ARX functional additions */
 .attachments{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.toolbtn{border:1px solid var(--line);background:#ffffff08;color:#fff;border-radius:12px;padding:8px 10px;font-size:10px}.toolbtn:active{transform:scale(.97)}.interest-picker{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.interest-option{cursor:pointer}.interest-option.selected{background:linear-gradient(135deg,var(--p),var(--v));border-color:#ffffff33}.garden{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.flower-card{padding:13px;text-align:center;border:1px solid var(--line);background:#ffffff07;border-radius:20px}.flower-3d{font-size:58px;filter:drop-shadow(0 15px 10px #0008);animation:flowerFloat 3s ease-in-out infinite}.flower-card:nth-child(2) .flower-3d{animation-delay:.4s}.flower-card:nth-child(3) .flower-3d{animation-delay:.8s}@keyframes flowerFloat{50%{transform:translateY(-7px) rotateY(12deg)}}.token-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:99px;background:#ffd76a15;border:1px solid #ffd76a33;color:#ffe39b;font-size:10px;font-weight:900}.map-privacy{position:absolute;bottom:12px;left:12px;right:12px;background:#08090ddd;border:1px solid var(--line);padding:10px;border-radius:14px;font-size:9px;color:#c9c3cf;z-index:2}.drop-zone{position:absolute;width:92px;height:92px;border-radius:50%;border:1px dashed #ffcb7a66;background:#ffcb7a0b;display:grid;place-items:center;color:#ffe4a8;cursor:pointer}.dz1{left:15%;top:20%}.dz2{right:14%;top:57%}.dz3{left:46%;top:68%}.event-attend{width:auto;margin-top:8px;padding:8px 11px}.audio-msg{display:flex;align-items:center;gap:8px}.audio-msg audio{max-width:190px}.media-msg{max-width:180px;border-radius:15px}.media-msg img{max-width:100%;border-radius:12px}.flower-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.flower-choice{padding:13px;border:1px solid var(--line);background:#ffffff08;border-radius:18px;text-align:center;cursor:pointer}.flower-choice:hover{background:#ffffff12}.flower-choice .flower-3d{font-size:48px}.balance{display:flex;justify-content:space-between;align-items:center;gap:10px}.sr-only-file{display:none}
@@ -58,9 +61,9 @@ button,input{font:inherit}button{cursor:pointer}
     <div class="form" style="text-align:left">
       <label>EMAIL<input id="loginEmail" type="email" autocomplete="email" placeholder="tu@email.com"></label>
       <label>CONTRASEÑA<input id="loginPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
-      <button class="primary login-btn" onclick="login()">Entrar en ARX</button>
+      <button type="button" class="primary login-btn" onclick="login()">Entrar en ARX</button>
     </div>
-    <button class="paste-btn" onclick="openRegister()">Crear mi cuenta ARX</button>
+    <button type="button" class="paste-btn" onclick="openRegister()">Crear mi cuenta ARX</button>
     <div id="loginError" class="error"></div>
     <div class="privacy">COMUNIDAD PRIVADA · CUENTA PERSONAL · PRIVACIDAD PRIMERO</div>
   </div>
@@ -196,7 +199,7 @@ button,input{font:inherit}button{cursor:pointer}
 
 <script>
 const $=id=>document.getElementById(id);
-const ARX_CONFIG_OK = !!(window.supabase && window.ARX_SUPABASE_URL && window.ARX_SUPABASE_KEY);
+const ARX_CONFIG_OK = !!(window.supabase && window.ARX_SUPABASE_URL && window.ARX_SUPABASE_KEY); if(!ARX_CONFIG_OK){setTimeout(()=>showAuthError('ARX no ha podido cargar Supabase. Recarga la página y vuelve a intentarlo.'),0);}
 const arxSupabase = ARX_CONFIG_OK ? window.supabase.createClient(window.ARX_SUPABASE_URL, window.ARX_SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }) : null;
 let currentUser=null;
 let state=JSON.parse(localStorage.getItem('arx_v5_clean')||'{}');
@@ -405,7 +408,7 @@ $('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
 function renderCal(){let c=$('cal'),d=['L','M','X','J','V','S','D'];c.innerHTML=d.map(x=>'<div class="day"><b>'+x+'</b></div>').join('');for(let i=1;i<=31;i++)c.innerHTML+='<div class="day '+(i===18?'eventday':'')+'">'+i+'</div>'}renderCal();
 save();
 if(state.logged){$('gate').style.display='none';$('app').style.display='block';applyRoleUI();}
-window.addEventListener('DOMContentLoaded',()=>{ $('gate').style.display='grid'; $('app').style.display='none';  if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});} });
+window.addEventListener('DOMContentLoaded',()=>{ $('gate').style.display='grid'; $('app').style.display='none'; });
 bootAuth();
 </script>
 </body>
