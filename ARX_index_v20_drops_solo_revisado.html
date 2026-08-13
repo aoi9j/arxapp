@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARX">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="arx-config.js"></script>
+<title>ARX</title>
+<meta name="arx-build" content="v16-eventos-seguridad">
+<style>
+:root{--bg:#07070b;--card:#111117dd;--line:#ffffff18;--txt:#f8f5fa;--mut:#aaa5b5;--p:#ff4fa3;--v:#8068ff;--c:#63e8ff;--g:#62dfa0}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+#gate{position:fixed;inset:0;z-index:999;background:radial-gradient(circle at 20% 0,#36142f,transparent 34%),radial-gradient(circle at 100% 80%,#171d42,transparent 40%),#07070b;display:grid;place-items:center;padding:22px}
+.login{width:min(420px,100%);text-align:center}.mark{font-size:42px;font-weight:950;letter-spacing:.28em;margin-left:.28em}.lock{margin:30px auto 22px;width:82px;height:82px;border:1px solid #ffffff20;border-radius:28px;background:#ffffff08;display:grid;place-items:center;font-size:31px;box-shadow:0 20px 70px #0009}.login h1{font-size:28px;margin:0 0 8px}.login p{color:var(--mut);font-size:12px;line-height:1.6;margin:0 auto 24px;max-width:330px}.code-label{font-size:9px;letter-spacing:.14em;color:#a8a1af;font-weight:900;margin-bottom:9px}.single-code{margin-bottom:12px}.single-code input{width:100%;height:54px;background:#ffffff09;border:1px solid #ffffff20;color:#fff;border-radius:16px;text-align:center;font-size:15px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;outline:none}.single-code input:focus{border-color:#ff4fa3;box-shadow:0 0 0 3px #ff4fa31a}.single-code input::placeholder{color:#77717f;letter-spacing:.08em}.login-btn{margin-top:0!important}.paste-btn{margin-top:9px;background:transparent;border:0;color:#c6bfd0;font-size:10px;padding:8px}.paste-btn:hover{color:#fff}.codebox{display:flex;gap:8px}.codebox input{min-width:0;flex:1;background:#ffffff09;border:1px solid #ffffff20;color:#fff;border-radius:16px;padding:15px;text-align:center;letter-spacing:.16em;text-transform:uppercase;outline:none}.primary{border:0;border-radius:16px;padding:15px 18px;background:linear-gradient(135deg,var(--p),var(--v));color:#fff;font-weight:900}.login .primary{width:100%;margin-top:10px}.error{min-height:18px;color:#ff83b9;font-size:11px;margin-top:9px}.privacy{margin-top:25px;color:#777280;font-size:9px;letter-spacing:.06em}
+#app{display:none}.app{max-width:570px;margin:auto;min-height:100vh;padding-bottom:100px}.top{position:sticky;top:0;z-index:20;padding:16px;background:#07070bcc;backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.22em;font-size:26px}.private{font-size:9px;letter-spacing:.1em;border:1px solid #ffffff20;background:#ffffff08;border-radius:99px;padding:8px 10px}.screen{display:none;padding:14px}.screen.on{display:block}.hero,.card{border:1px solid var(--line);background:linear-gradient(145deg,#ffffff0d,#ffffff04);backdrop-filter:blur(18px);border-radius:27px;box-shadow:0 25px 70px #0007}.hero{padding:22px}.ey{font-size:10px;letter-spacing:.17em;color:#d5cfdb;font-weight:900}.hero h1{font-size:34px;line-height:1;margin:8px 0}.mut{color:var(--mut);font-size:12px;line-height:1.5}.btn{width:100%;border:0;border-radius:16px;padding:14px;margin-top:12px;background:linear-gradient(135deg,var(--p),var(--v));color:white;font-weight:850}.ghost{background:#ffffff08;border:1px solid var(--line)}.sec{margin:20px 3px 10px;font-size:12px;font-weight:850;color:#d9d3df}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{padding:15px}.row{display:flex;align-items:center;gap:12px}.mini{width:66px;height:66px;border-radius:21px;display:grid;place-items:center;background:linear-gradient(145deg,var(--p),var(--v));font-size:27px;overflow:hidden}.mini img{width:100%;height:100%;object-fit:cover}.avatar{height:250px;border-radius:22px;overflow:hidden;background:#10121b}.avatar img{width:100%;height:100%;object-fit:cover}.fallback{height:100%;display:grid;place-items:center;font-size:100px}.status{display:inline-flex;gap:6px;align-items:center;padding:6px 9px;border-radius:99px;background:#62dfa015;border:1px solid #62dfa033;font-size:10px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 14px var(--g)}.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.tag{padding:7px 9px;border:1px solid var(--line);border-radius:99px;background:#ffffff08;font-size:10px}.stat{font-size:28px;font-weight:950;margin-top:5px}
+.map{height:430px;border-radius:27px;position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(125deg,#14202b,#10121a)}.map:before{content:"";position:absolute;inset:-20%;background:linear-gradient(35deg,transparent 47%,#ffffff09 48% 50%,transparent 51%);background-size:85px 85px;transform:rotate(8deg)}.pin,.drop{position:absolute;display:grid;place-items:center}.pin{width:43px;height:43px;border-radius:50%;background:#0b0b11dd;border:1px solid #fff3}.pin:after{content:"";width:12px;height:12px;background:var(--p);border-radius:50%;box-shadow:0 0 24px var(--p)}.drop{left:52%;top:43%;width:68px;height:68px;border-radius:21px;background:linear-gradient(145deg,#fff0a5,#ff5eae);color:#180a18;font-size:27px;box-shadow:0 0 50px #ff4fa377;animation:pulse 1.8s infinite;cursor:pointer}.p1{left:18%;top:24%}.p2{left:72%;top:18%}.p3{left:42%;top:65%}.p4{left:78%;top:74%}@media(max-width:420px){.single-code input{font-size:13px;letter-spacing:.07em}}@keyframes pulse{50%{transform:scale(1.08)}}.mapinfo{position:absolute;top:14px;left:14px;background:#08090ddd;padding:10px;border-radius:13px;border:1px solid var(--line);font-size:10px;z-index:2}
+.profile-main{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 18px}.profile-avatar{width:128px;height:128px;border-radius:50%;object-fit:cover;border:2px solid #ffffff22;background:linear-gradient(145deg,#302044,#151725);box-shadow:0 18px 45px #0008}.profile-avatar.fallback{display:flex;align-items:center;justify-content:center;font-size:42px}.profile-name{font-size:30px;font-weight:900;margin-top:14px;letter-spacing:-.03em}.profile-bio{font-size:13px;line-height:1.6;color:#c8c1ce;max-width:520px;margin:10px auto 0}.profile-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;width:100%;max-width:430px}.profile-actions .btn{margin:0}.profile-section{margin-top:18px}.interest-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.interest-option.selected{border-color:#ff4fa3;background:#ff4fa31c;color:#fff}.profile-edit{display:grid;gap:12px}.profile-edit input,.profile-edit textarea{width:100%;background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:13px;color:#fff;outline:0}.profile-edit textarea{min-height:110px;resize:vertical}.avatar-wrap{position:relative;display:inline-block}.avatar-edit{position:absolute;right:0;bottom:4px;width:38px;height:38px;border-radius:50%;border:1px solid #ffffff33;background:#15151d;color:#fff;cursor:pointer}.tag{cursor:default}
+.cardphoto{width:100%;height:205px;border-radius:21px;object-fit:cover;background:linear-gradient(145deg,#302044,#151725)}.discover{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.name{font-size:19px;font-weight:900}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.arrow{width:54px;height:54px;border-radius:50%;background:#ff4fa314;border:1px solid #ff4fa355;color:#ff83bd;font-size:24px}.matchcard{position:relative;overflow:hidden}.matchbadge{position:absolute;right:13px;top:13px;padding:7px 9px;border-radius:99px;background:#63dfa014;border:1px solid #63dfa033;font-size:9px;font-weight:900}.matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profiletile{padding:11px;border:1px solid var(--line);border-radius:18px;background:#ffffff07}.profiletile img{width:100%;height:150px;object-fit:cover;border-radius:14px}.heart{font-size:30px}.matchlock{font-size:30px}
+.chat{display:flex;flex-direction:column;gap:9px}.msg{max-width:83%;padding:11px 13px;border-radius:18px;background:#ffffff09;border:1px solid var(--line);font-size:12px}.me{align-self:flex-end;background:linear-gradient(135deg,#6d49d9,#aa3e86)}.compose{display:flex;gap:7px;margin-top:10px}.compose input{flex:1;background:#ffffff08;border:1px solid var(--line);border-radius:15px;padding:12px;color:white;outline:0}.send{width:50px;border-radius:15px;background:linear-gradient(135deg,var(--p),var(--v));color:white;border:0}.event{padding:13px;border:1px solid var(--line);background:#ffffff07;border-radius:18px;margin-top:9px}.event b{font-size:12px}.form{display:grid;gap:9px}.form label{font-size:10px;color:#c8c1ce;font-weight:800}.form input,.form textarea,.form select{width:100%;background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:12px;color:white;outline:0}.form textarea{min-height:90px}.figure{height:230px;border-radius:24px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 30%,#ffffff18,transparent 35%),linear-gradient(145deg,#181427,#0e111a);border:1px solid var(--line);cursor:pointer}.toy{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-size:88px;filter:drop-shadow(0 20px 15px #0009);transition:.4s}.figure:hover .toy{transform:translate(-50%,-50%) rotateY(180deg) scale(1.1)}.rare{position:absolute;left:10px;top:10px;padding:6px 8px;border-radius:99px;background:#ffffff0d;border:1px solid #fff2;font-size:9px;font-weight:900;letter-spacing:.12em}.date{position:absolute;bottom:10px;left:10px;color:#aaa4b3;font-size:9px}.viewer{height:310px;border-radius:24px;background:radial-gradient(circle,#ffffff16,transparent 45%),linear-gradient(145deg,#171326,#0d1019);display:grid;place-items:center;perspective:800px;overflow:hidden}.big3d{font-size:130px;animation:spin 5s linear infinite;filter:drop-shadow(0 30px 20px #0009)}@keyframes spin{to{transform:rotateY(360deg)}}.mission{display:flex;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.check{width:28px;height:28px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center}.bar{height:7px;background:#fff1;border-radius:99px;overflow:hidden}.bar i{display:block;width:92%;height:100%;background:linear-gradient(90deg,var(--p),var(--c))}
+
+/* PREMIUM DROPS */
+.drop-hero{position:relative;overflow:hidden;padding:24px;border-radius:28px;border:1px solid #ffffff18;background:radial-gradient(circle at 75% 20%,#ff4fa322,transparent 35%),radial-gradient(circle at 20% 80%,#8068ff22,transparent 40%),linear-gradient(145deg,#17121f,#0b0d14);box-shadow:0 30px 90px #0008}
+.drop-hero:after{content:"✦";position:absolute;right:-18px;top:-28px;font-size:170px;color:#ffffff08;transform:rotate(18deg)}
+.drop-kicker{font-size:9px;letter-spacing:.18em;color:#cfc8d6;font-weight:900}
+.drop-hero h1{font-size:32px;line-height:1.02;margin:9px 0}.drop-hero .mut{max-width:340px}
+.drop-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.drop-action{border:1px solid #ffffff18;background:#ffffff08;color:#fff;border-radius:15px;padding:12px;font-size:10px;font-weight:850}
+.drop-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.drop-card{position:relative;overflow:hidden;border:1px solid #ffffff18;background:linear-gradient(145deg,#ffffff0c,#ffffff04);border-radius:24px;padding:10px;box-shadow:0 20px 55px #0006}.drop-card .figure{height:205px}.drop-meta{padding:10px 3px 2px}.drop-title{font-weight:900;font-size:13px}.drop-sub{font-size:9px;color:#9f99a9;margin-top:4px}.rarity-legend{color:#ffd98a}.rarity-exclusive{color:#c8baff}
+.collection-strip{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.collection-chip{min-width:105px;padding:12px;border:1px solid #ffffff18;border-radius:17px;background:#ffffff07}.collection-chip b{display:block;font-size:10px}.collection-chip span{font-size:9px;color:#9f99a9}
+.vault{padding:13px;border:1px solid #ffffff18;border-radius:27px;background:linear-gradient(145deg,#ffffff0b,#ffffff03)}.vault-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.vault-title{font-size:15px;font-weight:900}.vault-badge{font-size:8px;letter-spacing:.12em;padding:6px 8px;border-radius:99px;background:#ffffff0a;border:1px solid #ffffff18}
+.viewer-premium{height:330px;border-radius:23px;background:radial-gradient(circle at 50% 38%,#ffffff1c,transparent 30%),radial-gradient(circle at 50% 70%,#8068ff18,transparent 45%),linear-gradient(145deg,#181327,#090c13);display:grid;place-items:center;perspective:900px;overflow:hidden;border:1px solid #ffffff12}.viewer-premium .big3d{font-size:145px;animation:spin 5s linear infinite;filter:drop-shadow(0 35px 25px #000b)}
+.vault-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.vault-controls button{border:1px solid #ffffff18;background:#ffffff07;color:#cfc8d6;border-radius:12px;padding:9px;font-size:9px}
+@media(max-width:420px){.drop-grid{grid-template-columns:1fr}.drop-actions{grid-template-columns:1fr 1fr}.viewer-premium{height:290px}}
+.bottom{position:fixed;z-index:30;bottom:0;left:50%;transform:translateX(-50%);width:min(570px,100%);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#08080ddd;backdrop-filter:blur(22px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr)}.nav{background:transparent;border:0;color:#807b89;font-size:9px;padding:6px}.nav b{display:block;font-size:19px;margin-bottom:3px}.nav.active{color:white}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:50;place-items:center;padding:15px}.modal.on{display:grid}.modalbox{width:min(510px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#19131f,#0d0e15);border:1px solid var(--line);border-radius:30px;padding:18px}.close{float:right;border:0;background:#fff1;color:white;border-radius:12px;padding:9px}.toast{position:fixed;z-index:80;left:50%;bottom:90px;transform:translate(-50%,20px);opacity:0;background:#17151ddd;border:1px solid var(--line);padding:11px 15px;border-radius:99px;font-size:11px;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}.notice{padding:11px;border-radius:15px;background:#63e8ff0b;border:1px solid #63e8ff22;font-size:10px;color:#c8eaf1}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{padding:8px 2px;text-align:center;border-radius:10px;background:#ffffff06;font-size:10px}.eventday{background:#ff4fa31a;border:1px solid #ff4fa355}.hidden{display:none!important}
+
+/* ARX functional additions */
+.attachments{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.toolbtn{border:1px solid var(--line);background:#ffffff08;color:#fff;border-radius:12px;padding:8px 10px;font-size:10px}.toolbtn:active{transform:scale(.97)}.interest-picker{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.interest-option{cursor:pointer}.interest-option.selected{background:linear-gradient(135deg,var(--p),var(--v));border-color:#ffffff33}.garden{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.flower-card{padding:13px;text-align:center;border:1px solid var(--line);background:#ffffff07;border-radius:20px}.flower-3d{font-size:58px;filter:drop-shadow(0 15px 10px #0008);animation:flowerFloat 3s ease-in-out infinite}.flower-card:nth-child(2) .flower-3d{animation-delay:.4s}.flower-card:nth-child(3) .flower-3d{animation-delay:.8s}@keyframes flowerFloat{50%{transform:translateY(-7px) rotateY(12deg)}}.token-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:99px;background:#ffd76a15;border:1px solid #ffd76a33;color:#ffe39b;font-size:10px;font-weight:900}.map-privacy{position:absolute;bottom:12px;left:12px;right:12px;background:#08090ddd;border:1px solid var(--line);padding:10px;border-radius:14px;font-size:9px;color:#c9c3cf;z-index:2}.drop-zone{position:absolute;width:92px;height:92px;border-radius:50%;border:1px dashed #ffcb7a66;background:#ffcb7a0b;display:grid;place-items:center;color:#ffe4a8;cursor:pointer}.dz1{left:15%;top:20%}.dz2{right:14%;top:57%}.dz3{left:46%;top:68%}.event-attend{width:auto;margin-top:8px;padding:8px 11px}.audio-msg{display:flex;align-items:center;gap:8px}.audio-msg audio{max-width:190px}.media-msg{max-width:180px;border-radius:15px}.media-msg img{max-width:100%;border-radius:12px}.flower-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.flower-choice{padding:13px;border:1px solid var(--line);background:#ffffff08;border-radius:18px;text-align:center;cursor:pointer}.flower-choice:hover{background:#ffffff12}.flower-choice .flower-3d{font-size:48px}.balance{display:flex;justify-content:space-between;align-items:center;gap:10px}.sr-only-file{display:none}
+.discover-hero{background:radial-gradient(circle at 80% 15%,#9b5cff22,transparent 35%),radial-gradient(circle at 20% 85%,#ff4fa318,transparent 35%),linear-gradient(145deg,#17121f,#0b0d14)}.discovery-card{padding:18px}.question-card{padding:18px}.question-card h2{font-size:24px;line-height:1.15;margin:10px 0}.question-input{width:100%;min-height:100px;margin-top:14px;background:#ffffff08;border:1px solid var(--line);border-radius:16px;padding:13px;color:#fff;resize:vertical;outline:0}.answer-card{padding:15px;margin-top:9px}.connection-status{font-size:9px;padding:6px 9px;border-radius:99px;border:1px solid #ffffff18;background:#ffffff08}.drop-clue{padding:14px;border:1px solid var(--line);background:#ffffff07;border-radius:18px;margin-top:10px}.code-box{letter-spacing:.12em;text-align:center;text-transform:uppercase;font-weight:900}.collection-item{padding:12px;border:1px solid var(--line);background:#ffffff07;border-radius:18px}.collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.drop-progress{height:8px;background:#fff1;border-radius:99px;overflow:hidden;margin-top:8px}.drop-progress i{display:block;height:100%;width:33%;background:linear-gradient(90deg,var(--p),var(--v))}
+.drop-steps .drop-step{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:5px}.drop-step b{font-size:11px;opacity:.55}.drop-step span{font-weight:800;font-size:12px}.drop-step small{font-size:10px;line-height:1.35;opacity:.6}.drop-card{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;margin-top:9px;background:rgba(255,255,255,.025);cursor:pointer}.drop-card>span{margin-left:auto;font-size:24px;opacity:.5}.drop-card-art{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.25),rgba(255,255,255,.04));font-size:24px}.vitrine{min-height:118px;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:10px;background:rgba(255,255,255,.025);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer}.vitrine-art{font-size:30px;height:58px;display:grid;place-items:center}.vitrine small{font-size:10px;opacity:.6}.vitrine.locked{opacity:.55}.vitrine:hover{transform:translateY(-1px)}.vitrine-viewer{text-align:center}.vitrine-3d{width:220px;height:260px;margin:10px auto;border-radius:28px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.22),rgba(255,255,255,.03));display:grid;place-items:center;font-size:90px;box-shadow:0 18px 60px rgba(0,0,0,.35);cursor:grab}.viewer-controls{display:flex;justify-content:center;gap:8px;margin-top:10px}.viewer-controls button{min-width:70px}
+@media(max-width:420px){.drop-steps{grid-template-columns:1fr 1fr 1fr!important}.drop-step{padding:8px 6px}.drop-step small{font-size:9px}.vitrine-grid{grid-template-columns:repeat(3,1fr)!important}.vitrine{min-height:105px;padding:7px}.vitrine-art{font-size:25px;height:48px}}
+
+.featured-drop{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid rgba(255,255,255,.11);border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025));cursor:pointer}.featured-art{width:76px;height:76px;border-radius:20px;display:grid;place-items:center;font-size:38px;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.3),rgba(255,255,255,.04));box-shadow:inset 0 0 28px rgba(255,255,255,.06)}.featured-info{min-width:0;flex:1}.featured-arrow{font-size:30px;opacity:.45}.featured-drop h2{font-size:20px}.drop-card{transition:transform .15s ease,border-color .15s ease}.drop-card:active,.featured-drop:active,.vitrine:active{transform:scale(.985)}.drop-map{overflow:hidden}
+
+/* ARX DROPS V11 — premium collection */
+.drop-hero{position:relative;padding:24px 2px 18px;overflow:hidden}.drop-hero:before{content:"";position:absolute;width:180px;height:180px;right:-70px;top:-55px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 68%);pointer-events:none}.drop-hero-top{display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,.48);font-size:10px;letter-spacing:.16em;font-weight:800}.drop-count{border:1px solid rgba(255,255,255,.13);border-radius:999px;padding:6px 9px}.drop-hero h1{font-size:38px;line-height:.96;letter-spacing:-.045em;margin:20px 0 18px;font-weight:850}.drop-hero h1 em{font-style:normal;opacity:.5}.drop-progress{height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}.drop-progress span{display:block;height:100%;background:linear-gradient(90deg,rgba(255,255,255,.95),rgba(255,255,255,.28));border-radius:99px}.drop-progress-label{display:flex;justify-content:space-between;margin-top:8px;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.42)}.drop-progress-label b{color:rgba(255,255,255,.8);letter-spacing:0}.drop-how{margin-top:7px;padding:15px;border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))}.drop-section-title{display:flex;gap:10px;align-items:center;margin:22px 0 10px}.drop-section-title>span{font-size:9px;letter-spacing:.14em;opacity:.32}.drop-section-title div{display:flex;flex-direction:column;gap:2px}.drop-section-title b{font-size:14px;letter-spacing:-.01em}.drop-section-title small{font-size:9px;color:rgba(255,255,255,.38)}.how-flow{display:flex;align-items:center;justify-content:space-between;gap:5px}.how-flow>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0}.how-flow i{width:35px;height:35px;border-radius:12px;border:1px solid rgba(255,255,255,.11);display:grid;place-items:center;font-style:normal;background:rgba(255,255,255,.035)}.how-flow b{font-size:9px}.how-flow small{font-size:8px;opacity:.4}.how-flow>span{opacity:.22;font-size:13px}.premium-map{border-radius:22px;box-shadow:inset 0 0 55px rgba(255,255,255,.025),0 15px 40px rgba(0,0,0,.16)}.drop-feature{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;padding:15px;border:1px solid rgba(255,255,255,.13);border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.018));cursor:pointer;box-shadow:0 15px 45px rgba(0,0,0,.18)}.feature-glow{position:absolute;width:180px;height:180px;left:-55px;top:-65px;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 68%);pointer-events:none}.feature-art{position:relative;flex:0 0 112px;height:145px;border-radius:19px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.26),rgba(255,255,255,.035) 55%,rgba(0,0,0,.08));display:grid;place-items:center;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 0 35px rgba(255,255,255,.05)}.feature-art span{font-size:62px;text-shadow:0 0 30px rgba(255,255,255,.25)}.feature-copy{position:relative;min-width:0;flex:1}.rarity{font-size:8px;letter-spacing:.13em;font-weight:850}.rarity.epic{opacity:.78}.rarity.legendary{opacity:.78}.rarity.rare{opacity:.55}.feature-copy h2{font-size:25px;letter-spacing:.08em;margin:5px 0 4px}.feature-copy p{font-size:10px;line-height:1.45;color:rgba(255,255,255,.42);margin:0 0 11px}.feature-meta{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.45)}.feature-meta b{color:rgba(255,255,255,.85)}.feature-btn{margin-top:11px;width:100%;padding:9px 11px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(255,255,255,.06);color:#fff;font-size:9px;font-weight:850;letter-spacing:.1em;text-align:left}.feature-btn span{float:right}.drop-row{display:flex;align-items:center;gap:10px;padding:11px 10px;border:1px solid rgba(255,255,255,.075);border-radius:15px;background:rgba(255,255,255,.025);margin-top:7px}.row-icon{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);font-size:18px}.row-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.row-copy b{font-size:11px;letter-spacing:.08em}.row-copy small{font-size:8px;color:rgba(255,255,255,.38)}.row-arrow{font-size:23px;opacity:.3}.vitrine-head{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.42);margin:2px 2px 9px}.vitrine-head b{color:rgba(255,255,255,.8);letter-spacing:0}.vitrine-premium-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.vitrine-premium{min-height:145px;border-radius:19px;padding:10px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer}.vitrine-premium .glass{width:100%;height:96px;border-radius:14px;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.18),rgba(255,255,255,.025) 62%);border:1px solid rgba(255,255,255,.07);display:grid;place-items:center}.vitrine-premium .glass span{font-size:42px;opacity:.78;text-shadow:0 0 25px rgba(255,255,255,.2)}.vitrine-premium>b{font-size:9px;letter-spacing:.1em}.vitrine-premium>small{font-size:7px;letter-spacing:.1em;opacity:.38}.vitrine-premium.locked{opacity:.42}.vitrine-premium.locked .glass span{font-size:26px}.vitrine-premium:active,.drop-feature:active,.drop-row:active{transform:scale(.985)}@media(max-width:420px){.drop-hero h1{font-size:34px}.feature-art{flex-basis:100px;height:136px}.vitrine-premium{min-height:138px}.vitrine-premium .glass{height:90px}}
+.arx-explore-head{align-items:flex-end}.arx-event-tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}.arx-event-tab{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#999;border-radius:999px;padding:9px 13px;font-weight:800;font-size:11px;white-space:nowrap}.arx-event-tab.active{background:rgba(255,255,255,.12);color:#fff}.arx-radar-card{overflow:hidden;padding:0}.arx-radar-copy{display:flex;justify-content:space-between;gap:12px;padding:15px 16px 11px}.arx-map{height:260px;position:relative;overflow:hidden;background:radial-gradient(circle at 25% 30%,rgba(255,255,255,.1),transparent 27%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.06),transparent 24%),#09090f;border-top:1px solid rgba(255,255,255,.06)}.arx-map-grid{position:absolute;inset:0;opacity:.35;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:42px 42px;transform:rotate(-5deg) scale(1.2)}.arx-map-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:#fff}.arx-map-ring{position:absolute;width:74px;height:74px;border:1px solid rgba(255,255,255,.16);border-radius:50%;left:50%;top:-8px;transform:translateX(-50%);box-shadow:0 0 0 15px rgba(255,255,255,.025)}.arx-map-lock{display:block;font-size:25px;margin-bottom:35px}.arx-map-center b{font-size:11px;letter-spacing:.16em}.arx-map-center span{font-size:10px;color:#777}.arx-radar-points{position:absolute;inset:0}.arx-radar-point{position:absolute;transform:translate(-50%,-50%);width:27px;height:27px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.13);color:#fff;box-shadow:0 0 0 7px rgba(255,255,255,.035);cursor:pointer}.arx-subhead{margin:22px 0 10px}.arx-subhead h3{margin:4px 0 0}.events-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.event-card{overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035)}.event-cover{height:135px;background-position:center;background-size:cover}.event-cover-empty{display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.13),transparent 35%),linear-gradient(135deg,#171722,#09090e)}.event-cover-empty span{font-size:30px}.event-card-body{padding:15px}.event-card h3{margin:4px 0 9px}.event-meta,.event-place{display:flex;gap:8px;color:#aaa;font-size:12px;margin-top:5px}.event-desc{margin:10px 0}.event-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:13px}.event-footer .btn{font-size:11px;padding:8px 10px}.arx-empty{padding:18px}.arx-empty .btn{margin-top:13px}.arx-event-wizard label{display:block;margin-top:13px}.arx-event-wizard input,.arx-event-wizard textarea,.arx-event-wizard select{width:100%;margin-top:6px}.arx-stepbar{display:flex;gap:7px;margin:18px 0}.arx-stepbar span{padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.06);color:#777;font-size:10px;font-weight:900}.arx-stepbar span.active{background:rgba(255,255,255,.15);color:#fff}.arx-event-step h3{margin:5px 0 10px}.arx-capacity{display:flex;align-items:center;justify-content:center;gap:25px;padding:20px 0}.arx-capacity strong{font-size:46px}.arx-private-note{margin-top:12px;padding:11px 12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.035);color:#aaa;font-size:12px;line-height:1.45}.arx-preview-card{margin-top:12px;padding:15px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:rgba(255,255,255,.035)}.arx-wizard-actions{display:flex;justify-content:space-between;gap:8px;margin-top:18px}.arx-event-detail h2{margin:5px 0 10px}@media(max-width:700px){.events-grid{grid-template-columns:1fr}.arx-explore-head{align-items:stretch}.arx-explore-head .btn{width:100%}}
+.drop-hero{padding:18px;margin-bottom:18px}.drop-hero-top{display:flex;justify-content:space-between;gap:15px}.drop-hero h3{margin:5px 0}.drop-status{font-size:10px;font-weight:900;padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.08)}.drop-progress{height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:18px}.drop-progress span{display:block;height:100%;width:0;background:#fff}.drop-progress-meta{display:flex;justify-content:space-between;margin-top:7px;color:#888;font-size:10px}.drop-hero-note{margin-top:13px;color:#aaa;font-size:12px}.drop-section-label{margin:20px 0 9px}.drop-instructions{padding:8px 15px}.drop-instruction{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px}.drop-instruction:last-child{border-bottom:0}.drop-instruction b{color:#777}.drop-map-card{padding:0;overflow:hidden}.drop-map-head{display:flex;justify-content:space-between;padding:15px 16px 11px}.drop-map{height:250px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.1),transparent 28%),#08080e}.drop-map-grid{position:absolute;inset:-20%;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:38px 38px;transform:rotate(-8deg) scale(1.2)}.drop-map-glow{position:absolute;width:180px;height:180px;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,255,255,.13),transparent 65%);animation:dropPulse 2.5s infinite}.drop-map-point{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.14);color:#fff;font-size:20px;z-index:3}.drop-map-center{position:absolute;left:50%;top:50%;transform:translate(-50%,35px);text-align:center;z-index:2}.drop-map-center span{display:block}.drop-map-center b{display:block;font-size:10px;letter-spacing:.15em}.drop-map-center small{font-size:9px;color:#777}.drop-map-lock{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:9px;color:#777;white-space:nowrap}.drop-open-btn{margin:12px;width:calc(100% - 24px)}@keyframes dropPulse{50%{opacity:.45;transform:translate(-50%,-50%) scale(1.18)}}.drop-collection-head{display:flex;justify-content:space-between;align-items:flex-end;margin:23px 0 10px}.drop-collection-head h3{margin:4px 0}.drop-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.drop-figure{text-align:left;padding:0;border:1px solid rgba(255,255,255,.08);border-radius:19px;overflow:hidden;background:rgba(255,255,255,.035);color:#fff}.drop-figure:nth-child(5){grid-column:1/-1}.drop-figure-art{height:150px;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.12),transparent 34%),linear-gradient(145deg,#161620,#09090e)}.drop-figure-art span{font-size:45px;color:#777}.drop-figure.unlocked .drop-figure-art span{color:#fff}.drop-figure-body{padding:13px}.drop-figure-body strong{display:block;font-size:13px;margin:3px 0}.drop-figure-body small{display:block;color:#777}.drop-figure-body em{display:block;font-style:normal;font-size:9px;color:#888;margin-top:10px}.drop-figure.available{border-color:rgba(255,255,255,.18)}.drop-figure.unlocked{border-color:rgba(255,255,255,.32)}.drop-master-card{margin-top:18px;padding:18px;text-align:center}.drop-master-card h3{margin:5px 0}.drop-master-lock{margin-top:13px;color:#777;font-size:11px}.drop-master-card.complete{border-color:rgba(255,255,255,.35)}.drop-modal{text-align:center}.drop-modal h2{margin:5px 0}.drop-modal-rarity{font-size:10px;letter-spacing:.18em;color:#999}.drop-3d-preview{height:230px;margin:16px 0;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 38%),#09090e;display:flex;flex-direction:column;align-items:center;justify-content:center}.drop-3d-preview span{font-size:70px;color:#555}.drop-3d-preview.is-unlocked span{color:#fff}.drop-3d-preview small{margin-top:18px;font-size:9px;letter-spacing:.16em;color:#777}.drop-clue-card{padding:15px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:13px;text-align:left}.drop-clue-card p{margin:7px 0;line-height:1.5}.drop-private-note{padding:11px;border-radius:14px;background:rgba(255,255,255,.04);color:#aaa;font-size:12px}.drop-complete{text-align:center}.drop-complete h2{font-size:32px}.drop-complete-orbit{width:130px;height:130px;border:1px solid rgba(255,255,255,.35);border-radius:50%;display:grid;place-items:center;margin:22px auto;font-size:30px;font-weight:800}@media(max-width:700px){.drop-figures{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="login">
+    <div class="mark">ARX</div>
+    <div class="lock">⌁</div>
+    <h1>Tu espacio privado</h1>
+    <p>Entra en ARX con tu código de acceso. Tu perfil quedará guardado para que no tengas que registrarte cada vez.</p>
+
+    <div class="single-code">
+      <input id="loginCode" autocomplete="new-password" autocapitalize="characters" spellcheck="false" placeholder="Código de acceso">
+      <button type="button" class="primary login-btn" onclick="loginWithCode()">Entrar en ARX</button>
+    </div>
+    <div id="loginError" class="error"></div>
+    <div class="privacy">COMUNIDAD PRIVADA · CUENTA PERSONAL · PRIVACIDAD PRIMERO</div>
+  </div>
+</div>
+
+<div id="app">
+<div class="app">
+<header class="top"><div class="logo">ARX</div><div class="row"><button class="nav" style="font-size:18px;padding:4px" onclick="openNotifications()">♢<span id="notifBadge" style="display:inline-block;background:var(--p);border-radius:99px;padding:2px 5px;font-size:8px;vertical-align:top">0</span></button><div class="private">⌁ COMUNIDAD PRIVADA</div></div></header>
+<main>
+
+<section id="home" class="screen on">
+<div class="hero"><div class="ey">PRIVATE SANCTUARY</div><h1>Tu mundo.<br>Tu refugio.</h1><div class="mut">Descubre personas de tu comunidad, conecta mediante flechazos y convierte momentos en recuerdos coleccionables.</div><button class="btn" onclick="show('discover')">Descubrir personas →</button></div>
+<div class="sec">TU PERFIL</div>
+<div class="card"><div id="homeAvatar" class="avatar"><div class="fallback">✦</div></div><div class="row" style="margin-top:13px"><div><b id="homeName">Tu nombre</b><div id="homeAge" class="mut" style="font-weight:800"></div></div></div><div id="homeInterests" class="tags"></div></div>
+<div class="card" style="margin-top:11px"><div class="row"><div class="mini">✦</div><div><b>Tu colección ARX</b><div class="mut">Tus figuras 3D aparecerán aquí cuando consigas un Drop.</div></div></div><button class="btn ghost" onclick="show('drops')">Abrir Drops →</button></div>
+</section>
+
+<section id="discover" class="screen">
+<div class="hero discover-hero"><div class="ey">✦ DESCUBRIR · PRIVACIDAD ARX</div><h1>No busques perfiles.<br>Descubre personas.</h1><div class="mut">Aquí puedes encontrar coincidencias, leer lo que piensa la comunidad y enviar una conexión. El chat permanece cerrado hasta que ambas personas aceptan.</div></div>
+<div class="sec">🎲 EL DESCUBRIMIENTO DE HOY</div>
+<div class="card discovery-card" id="surpriseCard"><div class="mut" id="surpriseIntro">ARX ha encontrado una coincidencia curiosa para ti.</div><button class="btn" onclick="surpriseMe()">✦ Sorpréndeme</button></div>
+<div class="sec">💭 PREGUNTA DEL DÍA</div>
+<div class="card question-card"><div class="ey" id="questionDate">24 HORAS · ARX</div><h2 id="dailyQuestion">Cargando pregunta…</h2><div class="mut">Una sola pregunta para toda la comunidad durante 24 horas.</div><textarea id="dailyAnswer" class="question-input" maxlength="280" placeholder="Escribe tu respuesta…"></textarea><button class="btn" onclick="saveDailyAnswer()">Publicar mi respuesta</button><div id="answerStatus" class="mut" style="margin-top:8px"></div></div>
+<div class="sec">🌙 RESPUESTAS DE ARX</div><div id="dailyAnswers"></div>
+<div class="card" style="margin-top:11px"><div class="row"><div class="mini">🔐</div><div><b>Conexión mutua</b><div class="mut">Puedes descubrir perfiles y mostrar interés, pero nadie puede escribirte desde aquí. El chat solo se abre cuando ambas aceptáis.</div></div></div></div>
+</section>
+
+<section id="matches" class="screen">
+<div class="hero"><div class="ey">CONEXIONES ARX</div><h1>Personas con las que conectas.</h1><div class="mut">Aquí nacen las conversaciones, los detalles y los planes. Sin flechazos obligatorios.</div></div>
+<div class="sec">TUS CONEXIONES</div>
+<div id="connectionList"><div class="notice">Todavía no tienes conexiones. Cuando exista una conexión mutua, aparecerá aquí.</div></div>
+</section>
+
+<section id="privateChat" class="screen">
+<div class="sec">CONVERSACIÓN</div><div class="card"><div class="notice">El chat se abrirá cuando exista una conexión mutua.</div></div>
+<div id="messages" class="card chat" style="margin-top:11px"><div class="notice">Esta conversación está vacía. Cuando conectéis mutuamente, podréis empezar a hablar.</div></div>
+<div class="compose"><input id="input" placeholder="Escribe un mensaje…"><button class="send" onclick="send()">➤</button></div>
+<div class="attachments">
+<button class="toolbtn" onclick="pickGif()">GIF</button>
+<button class="toolbtn" onclick="pickPhoto()">📷 Foto</button>
+<button class="toolbtn" onclick="toggleAudio()">🎙 Audio</button>
+<button class="toolbtn" onclick="pickFile()">📎 Archivo</button>
+<button class="toolbtn" onclick="openReactionPicker()">❤️ Reacción</button>
+<button class="toolbtn" onclick="openPoll()">▣ Encuesta</button>
+</div>
+<input id="gifInput" class="sr-only-file" type="file" accept="image/gif" onchange="attachGif(event)">
+<input id="photoInput" class="sr-only-file" type="file" accept="image/*" onchange="attachPhoto(event)">
+<input id="fileInput" class="sr-only-file" type="file" onchange="attachFile(event)">
+<div id="audioStatus" class="mut" style="margin-top:8px"></div>
+</section>
+
+<section id="map" class="section">
+<div class="section-head arx-explore-head"><div><div class="ey">ARX // EXPLORE</div><h2>Descubre qué está ocurriendo.</h2><div class="mut">Experiencias, quedadas y planes dentro de ARX.</div></div><button class="btn" type="button" onclick="openEvent()">＋ Crear experiencia</button></div>
+<div class="arx-event-tabs"><button class="arx-event-tab active" type="button" data-event-filter="all">TODO</button><button class="arx-event-tab" type="button" data-event-filter="near">CERCA</button><button class="arx-event-tab" type="button" data-event-filter="week">ESTA SEMANA</button></div>
+<div class="card arx-radar-card"><div class="arx-radar-copy"><div><div class="ey">✦ ARX RADAR</div><b>Lo que está pasando cerca</b></div><span class="mut">Zona aproximada</span></div>
+<div id="mapBox" class="arx-map"><div class="arx-map-grid"></div><div class="arx-map-center"><span class="arx-map-ring"></span><span class="arx-map-lock">⌖</span><div><b>MAPA ARX</b><br><span>Las direcciones exactas permanecen privadas.</span></div></div><div id="eventRadar" class="arx-radar-points"></div></div></div>
+<div class="arx-subhead"><div><div class="ey">AHORA EN ARX</div><h3>Experiencias</h3></div></div><div id="events" class="events-grid"></div>
+<div class="card arx-for-you"><div class="ey">PARA TI</div><h3>Encuentra tu próximo plan.</h3><div class="mut">ARX podrá personalizar estas recomendaciones según tus preferencias.</div></div>
+</section>
+
+<section id="drops" class="section">
+<div class="section-head"><div><div class="ey">ARX // DROPS</div><h2>Colecciones ocultas.</h2><div class="mut">Encuentra las señales, desbloquea las figuras y completa cada Drop.</div></div></div>
+
+<div class="card drop-hero">
+<div class="drop-hero-top"><div><div class="ey">DROP #01</div><h3>THE FIRST SIGNAL</h3><div class="mut">5 figuras · colección 01</div></div><div class="drop-status">ACTIVO</div></div>
+<div class="drop-progress"><span id="dropProgressBar"></span></div>
+<div class="drop-progress-meta"><span id="dropProgressText">0 / 5 descubiertas</span><span id="dropPercent">0%</span></div>
+<div class="drop-hero-note">✦ Un Drop contiene 5 figuras. Cada una tiene su propia rareza y pista.</div>
+</div>
+
+<div class="ey drop-section-label">CÓMO CONSEGUIR LOS DROPS</div>
+<div class="card drop-instructions">
+<div class="drop-instruction"><b>01</b><span>Encuentra un Drop en el mapa.</span></div>
+<div class="drop-instruction"><b>02</b><span>Entra en el Drop y selecciona una figura.</span></div>
+<div class="drop-instruction"><b>03</b><span>Resuelve sus pistas para desbloquearla.</span></div>
+<div class="drop-instruction"><b>04</b><span>Consigue las 5 figuras y completa la colección.</span></div>
+</div>
+
+<div class="ey drop-section-label">MAPA DE DROPS</div>
+<div class="card drop-map-card">
+<div class="drop-map-head"><div><div class="ey">ARX RADAR</div><b>Drops detectados</b></div><span class="mut">Zona aproximada</span></div>
+<div id="dropMap" class="drop-map">
+<div class="drop-map-grid"></div><div class="drop-map-glow"></div>
+<button class="drop-map-point active" type="button" id="dropMapPoint" aria-label="Abrir Drop 01" onclick="openDrop01()">✦</button>
+<div class="drop-map-center"><span>⌖</span><b>DROP #01</b><small>THE FIRST SIGNAL</small></div>
+<div class="drop-map-lock">🔐 Dirección exacta protegida</div>
+</div>
+<button class="btn drop-open-btn" type="button" onclick="openDrop01()">ENTRAR EN DROP #01 →</button>
+</div>
+
+<div class="drop-collection-head"><div><div class="ey">DROP #01</div><h3>THE FIRST SIGNAL</h3></div><span id="dropCollectionCount" class="mut">0 / 5</span></div>
+<div id="dropFigures" class="drop-figures"></div>
+
+<div class="card drop-master-card" id="dropMasterCard">
+<div class="ey">DROP MASTER</div><h3>Completa la colección.</h3>
+<div class="mut">Consigue las 5 figuras para desbloquear la insignia exclusiva.</div>
+<div class="drop-master-lock">🔒 5 / 5 necesarias</div>
+</div>
+</section>
+
+<section id="garden" class="screen">
+<div class="hero"><div class="ey">ARX GARDEN</div><h1>Detalles que se quedan.</h1><div class="mut">Envía flores virtuales a tus conexiones y conviértelas en recuerdos coleccionables.</div><div class="balance"><span class="token-pill">✦ <span id="tokenBalance">120</span> tokens</span><button class="btn ghost" style="width:auto;margin-top:0" onclick="openTokenInfo()">¿Cómo conseguir?</button></div></div>
+<div class="sec">MI JARDÍN</div><div id="gardenList" class="garden"></div>
+<div class="sec">FLORES ARX</div><div class="flower-modal-grid">
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌹</div><b>Rosa Aurora</b><div class="mut">10 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌷</div><b>Tulipán</b><div class="mut">15 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🌸</div><b>Sakura</b><div class="mut">25 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🪻</div><b>Lavanda Nocturna</b><div class="mut">30 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">🥀</div><b>Rosa Obsidiana</b><div class="mut">50 ✦</div></div>
+<div class="flower-choice" onclick="openFlowerPicker()"><div class="flower-3d">✨</div><b>Flor Celestial</b><div class="mut">100 ✦</div></div>
+</div></section>
+<section id="calendar" class="screen"><div class="hero"><div class="ey">CALENDARIO ARX</div><h1>Que no se te olvide nadie.</h1><div class="mut">Cumpleaños y eventos privados con avisos configurables.</div></div><button class="btn" onclick="openBirthday()">＋ Añadir cumpleaños</button><div class="sec">AGOSTO 2026</div><div class="card"><div class="calendar" id="cal"></div></div><div class="sec">PRÓXIMOS AVISOS</div><div id="birthdays"><div class="notice">Todavía no hay cumpleaños añadidos.</div></div></section>
+
+<section id="missions" class="screen"><div class="hero"><div class="ey">MISIONES DE HOY</div><h1>Haz que pase algo.</h1><div class="mut">Completa pequeñas acciones y gana XP, flechazos y recompensas.</div></div><div class="sec">HOY</div><div class="notice">Las misiones aparecerán aquí cuando ARX las active.</div></section>
+<section id="notifications" class="screen"><div class="sec">NOTIFICACIONES</div><div class="notice">No tienes notificaciones nuevas.</div></section>
+<section id="groups" class="screen"><div class="sec">MIS CÍRCULOS</div><div class="hero"><div class="ey">COMUNIDAD</div><h1>Encuentra a las tuyas.</h1><div class="mut">Pequeños círculos para compartir intereses, planes y eventos.</div></div><div class="notice">Todavía no hay círculos creados.</div></section>
+<section id="profile" class="screen">
+<div class="profile-main card">
+  <div class="ey">MI ESPACIO ARX</div>
+  <div class="avatar-wrap">
+    <div id="profileAvatar" class="profile-avatar fallback">✦</div>
+    <button class="avatar-edit" onclick="chooseProfilePhoto()" aria-label="Cambiar foto">＋</button>
+  </div>
+  <div id="profileName" class="profile-name">Aoi</div>
+  <div id="profileAge" class="mut" style="font-weight:800;margin-top:4px"></div>
+  <div id="profileBio" class="profile-bio">Mi plan perfecto es perderme por una ciudad nueva.</div>
+  <div id="profileInterests" class="tags" style="justify-content:center;margin-top:14px"></div>
+  <div class="profile-actions">
+    <button class="btn" onclick="editProfile()">✎ Editar perfil</button>
+    <button class="btn ghost" onclick="openInterests()">＋ Intereses</button>
+  </div>
+  <button class="btn ghost" style="max-width:430px;margin:10px auto 0;display:block" onclick="logout()">Cerrar sesión</button>
+</div>
+
+<div class="profile-section">
+  <div class="sec">MI COLECCIÓN</div>
+  <div class="grid"><div class="card"><div class="stat">3</div><div class="mut">Piezas</div></div><div class="card"><div class="stat">4</div><div class="mut">Logros</div></div></div>
+</div>
+
+<div id="founderPanel" class="card hidden" style="margin-top:18px"><div class="ey">ARX CONTROL</div><h2 style="margin:7px 0">Panel de fundadora ✦</h2><div class="mut">Acceso total al prototipo: comunidades, miembros, Drops, eventos, coleccionables y configuración.</div><button class="btn" onclick="openImprovements()">💡 Ver mejoras recibidas <span id="improvementCount">0</span></button><button class="btn ghost" onclick="openSecurity()">🔐 Seguridad y códigos</button></div>
+
+<div class="profile-section">
+  <div class="sec">MI JARDÍN Y COLECCIÓN</div>
+  <div class="card"><div class="row"><div class="mini">🎁</div><div><b>Drops & Vitrinas</b><div class="mut">Colección, rarezas y piezas 360°</div></div></div><button class="btn ghost" onclick="show('drops')">Entrar en mi colección →</button></div>
+  <div class="card" style="margin-top:11px"><div class="row"><div class="mini">🌹</div><div><b>Mi Jardín ARX</b><div class="mut">Flores virtuales y recuerdos recibidos</div></div></div><button class="btn ghost" onclick="show('garden')">Abrir jardín →</button></div>
+</div>
+
+<div class="profile-section">
+  <div class="sec">OPINIÓN DE LA COMUNIDAD</div>
+  <div class="card"><div class="row"><div class="mini">💡</div><div><b>¿Cómo podemos mejorar ARX?</b><div class="mut">Tu opinión ayuda a construir las próximas funciones.</div></div></div><button class="btn" onclick="openImprovementForm()">＋ Enviar una mejora</button></div>
+</div>
+
+
+<input id="profilePhotoInput" type="file" accept="image/*" hidden onchange="photoSelected(event)">
+</section>
+</main>
+<nav class="bottom"><button class="nav active" onclick="show('home')"><b>⌂</b>Inicio</button><button class="nav" onclick="show('discover')"><b>✦</b>Descubrir</button><button class="nav" onclick="show('matches')"><b>♡</b>Conexiones</button><button class="nav" onclick="show('map')"><b>⌖</b>Mapa</button><button class="nav" onclick="show('drops')"><b>✦</b>Drops</button><button class="nav" onclick="show('profile')"><b>◈</b>Perfil</button></nav><div style="display:none"></div>
+</div></div>
+
+<div id="modal" class="modal"><div class="modalbox"><button class="close" onclick="closeM()">✕</button><div id="modalContent"></div></div></div><div id="toast" class="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ARX_CONFIG_OK = !!(window.ARX_SUPABASE_URL && window.ARX_SUPABASE_KEY && !window.ARX_SUPABASE_URL.includes('PEGA_AQUI'));
+const arxSupabase = ARX_CONFIG_OK ? window.supabase.createClient(window.ARX_SUPABASE_URL, window.ARX_SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }) : null;
+let currentUser=null;
+let state=JSON.parse(localStorage.getItem('arx_v5_clean')||'{}'); state=Object.assign({code:"",logged:false,role:"member",community:"ARX",displayName:"",age:null,bio:"",photo:"",profileComplete:false,sent:[],matches:[],arrows:0,dailyClaim:"",improvements:[],missionClaimed:false,interests:[],tokens:0,flowers:[],events:[],dailyQuestionKey:"",dailyQuestionIndex:0,dailyAnswers:{},pendingConnections:[],collectedFigures:[],dropProgress:{},accountCreated:false},state); if(!Array.isArray(state.improvements))state.improvements=[]; if(!Array.isArray(state.interests))state.interests=[]; if(!Array.isArray(state.flowers))state.flowers=[]; if(!Array.isArray(state.events))state.events=[]; if(!Array.isArray(state.pendingConnections))state.pendingConnections=[]; if(!Array.isArray(state.collectedFigures))state.collectedFigures=[]; if(!state.dailyAnswers||typeof state.dailyAnswers!=='object')state.dailyAnswers={}; if(typeof state.dropProgress!=='number')state.dropProgress=0; if(typeof state.tokens!=='number')state.tokens=0;
+function save(){localStorage.setItem('arx_v5_clean',JSON.stringify(state));if($('sentCount'))$('sentCount').textContent=state.sent.length;if($('matchCount'))$('matchCount').textContent=state.matches.length;if($('arrowBalance'))$('arrowBalance').textContent=state.arrows||0;if($('improvementCount'))$('improvementCount').textContent=state.improvements.length;if($('tokenBalance'))$('tokenBalance').textContent=state.tokens||0;renderInterests();renderGarden();renderEvents();renderProfile();renderDiscover();renderDrops();}
+function showAuthError(message){ const el=$('loginError'); if(el) el.textContent=message||''; }
+async function finishAuth(user){
+  currentUser=user;
+  state.logged=true;
+  const metadataRole=(user.user_metadata&&user.user_metadata.role);
+  if(metadataRole==='founder'||metadataRole==='member') state.role=metadataRole;
+  else if(state.role!=='founder'&&state.role!=='member') state.role='member';
+  state.accountCreated=true;
+
+  const {data:profile,error}=await arxSupabase.from('arx_profiles')
+    .select('*').eq('id',user.id).maybeSingle();
+
+  if(error){ console.error(error); }
+  if(profile){
+    state.displayName=profile.username||state.displayName||'';
+    state.bio=profile.bio||'';
+    state.photo=profile.avatar_url||'';
+    state.interests=Array.isArray(profile.interests)?profile.interests:[];
+    if(profile.age!=null) state.age=profile.age;
+    if(profile.profile_completed!==false && state.displayName && state.photo && state.age){
+      state.profileComplete=true;
+    }
+  }
+  try{save()}catch(renderError){console.error('ARX UI render error:',renderError)}
+  if(!state.profileComplete && state.role!=='founder'){
+    $('gate').style.display='none'; $('app').style.display='block';
+    applyRoleUI(); openProfileSetup();
+    return;
+  }
+  $('gate').style.display='none'; $('app').style.display='block'; applyRoleUI();
+}
+
+function openProfileSetup(){
+  openM('<div class="ey">PRIMER PASO · ARX</div><h2>Crea tu perfil</h2><div class="mut">Para proteger la comunidad necesitamos una foto, tu nombre y tu edad. El resto puedes completarlo cuando quieras.</div><div class="form" style="margin-top:14px"><label>FOTO DE PERFIL · OBLIGATORIA<input id="setupPhoto" type="file" accept="image/*"></label><label>NOMBRE O ALIAS · OBLIGATORIO<input id="setupName" maxlength="30" placeholder="Cómo quieres que te conozcan"></label><label>EDAD · OBLIGATORIA<input id="setupAge" type="number" min="18" max="120" inputmode="numeric" placeholder="18"></label><label>BIOGRAFÍA · OPCIONAL<textarea id="setupBio" maxlength="220" placeholder="Cuéntanos algo sobre ti…"></textarea></label><button class="btn" onclick="createProfile()">Activar mi perfil ARX</button></div>');
+}
+
+async function createProfile(){
+  if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}
+  const name=($('setupName').value||'').trim();
+  const age=parseInt($('setupAge').value,10);
+  const bio=($('setupBio').value||'').trim();
+  const file=$('setupPhoto').files&&$('setupPhoto').files[0];
+  if(!file){toast('La foto es obligatoria');return}
+  if(!name){toast('El nombre es obligatorio');return}
+  if(!Number.isInteger(age)||age<18||age>120){toast('Introduce una edad válida (18+)');return}
+  if(!file.type.startsWith('image/')){toast('Selecciona una imagen válida');return}
+  if(file.size>5*1024*1024){toast('La foto debe pesar menos de 5 MB');return}
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+  const path=currentUser.id+'/avatar.'+ext;
+  const {error:uploadError}=await arxSupabase.storage.from('arx-avatars').upload(path,file,{upsert:true,contentType:file.type});
+  if(uploadError){toast('No se pudo subir la foto: '+uploadError.message);return}
+  const {data}=arxSupabase.storage.from('arx-avatars').getPublicUrl(path);
+  const avatarUrl=data.publicUrl+'?v='+Date.now();
+  const {error}=await arxSupabase.from('arx_profiles').upsert({
+    id:currentUser.id,username:name,age:age,bio:bio,avatar_url:avatarUrl,interests:[],profile_completed:true
+  },{onConflict:'id'});
+  if(error){toast('No se pudo guardar el perfil: '+error.message);return}
+  state.displayName=name;state.age=age;state.bio=bio;state.photo=avatarUrl;state.interests=[];state.profileComplete=true;state.accountCreated=true;
+  save();closeM();toast('Perfil creado correctamente ✦');
+}
+
+async function loginWithCode(){
+  showAuthError('');
+  const input=$('loginCode');
+  const code=(input?.value||'').trim().toUpperCase();
+  if(!code){showAuthError('Introduce tu código de acceso.');return}
+  const button=document.querySelector('.login-btn');
+  if(button){button.disabled=true;button.textContent='Comprobando…';}
+  try{
+    if(!arxSupabase)throw new Error('ARX no tiene configurada la conexión con Supabase.');
+
+    const sessionResult=await arxSupabase.auth.getSession();
+    if(sessionResult.error)throw new Error('Sesión: '+sessionResult.error.message);
+
+    let user=sessionResult.data?.session?.user||null;
+    if(!user){
+      const authResult=await arxSupabase.auth.signInAnonymously();
+      if(authResult.error)throw new Error('Inicio seguro: '+authResult.error.message);
+      user=authResult.data?.user||null;
+    }
+    if(!user)throw new Error('Supabase no devolvió una usuaria.');
+
+    const rpc=await arxSupabase.rpc('arx_enter_with_code',{input_code:code});
+    if(rpc.error)throw new Error('Código: '+rpc.error.message);
+
+    const role=typeof rpc.data==='string'?rpc.data:null;
+    if(role!=='member'&&role!=='founder'){
+      showAuthError('Código de acceso no válido.');
+      return;
+    }
+
+    state.role=role;
+    await finishAuth(user);
+    state.role=role;
+    state.logged=true;
+    state.accountCreated=true;
+    if(role==='founder')state.profileComplete=true;
+    try{save()}catch(e){console.error('ARX render after login:',e)}
+    $('gate').style.display='none';
+    $('app').style.display='block';
+    applyRoleUI();
+    await loadEvents();
+    if(role!=='founder'&&!state.profileComplete)openProfileSetup();
+    if(input)input.value='';
+    toast(role==='founder'?'Bienvenida, fundadora ✦':'Bienvenida a ARX ✦');
+  }catch(e){
+    console.error('ARX login error:',e);
+    const msg=String(e?.message||e||'Error desconocido');
+    showAuthError(msg.length>170?msg.slice(0,170)+'…':msg);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Entrar en ARX';}
+  }
+}
+$('loginCode')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();loginWithCode();}});
+
+async function logout(){
+  if(arxSupabase) await arxSupabase.auth.signOut().catch(()=>{});
+  currentUser=null;
+  state.logged=false;
+  state.role='member';
+  // El perfil NO se borra al cerrar sesión.
+  save();
+  $('app').style.display='none';
+  $('gate').style.display='grid';
+  showAuthError('');
+  if($('loginCode'))$('loginCode').value='';
+  toast('Sesión cerrada. Tu perfil sigue guardado ✦');
+}
+
+if(arxSupabase){
+  arxSupabase.auth.onAuthStateChange(async(event,session)=>{
+    if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED') && session?.user){
+      currentUser=session.user;
+      await finishAuth(session.user);
+      state.logged=true;
+      state.accountCreated=true;
+      save();
+      $('gate').style.display='none';
+      $('app').style.display='block';
+      applyRoleUI();
+      await loadEvents();
+    }
+    if(event==='SIGNED_OUT'){
+      currentUser=null;
+      state.logged=false;
+      save();
+      $('app').style.display='none';
+      $('gate').style.display='grid';
+    }
+  });
+}
+
+async function bootAuth(){
+  $('gate').style.display='grid';
+  $('app').style.display='none';
+  if(!ARX_CONFIG_OK){showAuthError('ARX todavía no está conectado a Supabase.');return}
+
+  // NO cerramos sesión al recargar. Recuperamos la sesión persistida de Supabase.
+  const {data:{session},error}=await arxSupabase.auth.getSession();
+  if(error){
+    console.error('Error recuperando sesión:',error);
+    showAuthError('No se pudo recuperar tu sesión.');
+    return;
+  }
+
+  if(session?.user){
+    currentUser=session.user;
+    await finishAuth(session.user);
+    state.logged=true;
+    state.accountCreated=true;
+    save();
+    $('gate').style.display='none';
+    $('app').style.display='block';
+    applyRoleUI();
+    await loadEvents();
+    return;
+  }
+
+  currentUser=null;
+  state.logged=false;
+  save();
+}
+
+function openSecurity(){
+  if(state.role!=='founder'){toast('Solo la fundadora puede acceder a Seguridad');return}
+  openM(`<div class="ey">ARX CONTROL</div><h2>Seguridad 🔐</h2><div class="mut">Los códigos actuales nunca se muestran. Puedes sustituirlos desde aquí y el anterior dejará de funcionar.</div><div class="event" style="margin-top:14px"><b>Código de miembros</b><div class="mut" style="margin-top:4px">Código protegido · se cambia sin mostrar el actual.</div><button class="btn" onclick="openChangeCode('member')">Cambiar código de miembros</button></div><div class="event"><b>Código de fundadora</b><div class="mut" style="margin-top:4px">Código protegido · se cambia sin mostrar el actual.</div><button class="btn" onclick="openChangeCode('founder')">Cambiar código de fundadora</button></div>`);
+}
+function openChangeCode(type){
+  if(state.role!=='founder'){toast('No autorizado');return}
+  const label=type==='founder'?'fundadora':'miembros';
+  openM(`<div class="ey">SEGURIDAD ARX</div><h2>Cambiar código de ${label}</h2><div class="mut">El código anterior dejará de funcionar en cuanto guardes el nuevo.</div><div class="form" style="margin-top:14px"><label>NUEVO CÓDIGO<input id="newAccessCode" type="text" maxlength="80" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Escribe el nuevo código"></label><label>REPETIR CÓDIGO<input id="newAccessCode2" type="text" maxlength="80" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Repite el nuevo código"></label><button class="btn" onclick="changeAccessCode('${type}')">Guardar nuevo código</button></div>`);
+}
+async function changeAccessCode(type){
+  if(state.role!=='founder'||!arxSupabase||!currentUser){toast('No autorizado');return}
+  const a=($('newAccessCode')?.value||'').trim().toUpperCase();
+  const b=($('newAccessCode2')?.value||'').trim().toUpperCase();
+  if(a.length<8){toast('El código debe tener al menos 8 caracteres');return}
+  if(a!==b){toast('Los códigos no coinciden');return}
+  if(!/^ARX-[A-Z0-9-]+$/.test(a)){toast('El código debe empezar por ARX- y usar solo letras, números y guiones');return}
+  const {data,error}=await arxSupabase.rpc('arx_change_access_code',{target_code_type:type,new_code:a});
+  if(error||data!==true){console.error(error);toast(error?.message||'No se pudo cambiar el código');return}
+  closeM();
+  toast('Código de '+(type==='founder'?'fundadora':'miembros')+' actualizado ✦');
+}
+
+function showInstallHelp(){openM('<div class="ey">ARX · APP</div><h2>Añadir ARX al móvil</h2><div class="event"><b>iPhone / iPad</b><div class="mut">Abre ARX en Safari → Compartir → Añadir a pantalla de inicio.</div></div><div class="event"><b>Android</b><div class="mut">Abre ARX en Chrome → menú ⋮ → Instalar aplicación / Añadir a pantalla de inicio.</div></div><div class="mut" style="margin-top:10px">ARX incluye soporte PWA para que pueda instalarse como una app cuando esté publicada en HTTPS.</div>')}
+function applyRoleUI(){
+  const fp=$('founderPanel'); if(fp) fp.classList.toggle('hidden',state.role!=='founder');
+  const badge=document.querySelector('.private');
+  if(state.role==='founder'){
+    badge.textContent='✦ FUNDADORA · ACCESO TOTAL';
+    badge.style.borderColor='#ff4fa366';
+  }else{
+    badge.textContent='⌁ COMUNIDAD PRIVADA';
+  }
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
+  const target=$(id); if(!target)return; target.classList.add('on');
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  const nav=[...document.querySelectorAll('.nav')].find(n=>n.getAttribute('onclick')===`show(\'${id}\')`);
+  if(nav)nav.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeM(){ $('modal').classList.remove('on'); }
+function openM(html){ $('modalContent').innerHTML=html; $('modal').classList.add('on'); }
+function openImprovementForm(){openM('<div class="ey">BUZÓN ARX</div><h2>Ayúdanos a mejorar ✦</h2><div class="mut">Cuéntanos qué cambiarías, qué función te gustaría añadir o qué parte no te convence.</div><div class="form" style="margin-top:14px"><label>TIPO DE MEJORA<select id="impType"><option>✨ Nueva función</option><option>🎨 Diseño / experiencia</option><option>🐛 Algo no funciona</option><option>💡 Otra idea</option></select></label><label>TU IDEA<textarea id="impText" placeholder="Escribe tu propuesta…"></textarea></label><button class="btn" onclick="submitImprovement()">Enviar mejora</button></div>')}
+function submitImprovement(){const text=$('impText').value.trim();if(!text){toast('Cuéntanos primero tu mejora');return}state.improvements.unshift({type:$('impType').value,text,date:new Date().toLocaleString('es-ES')});save();closeM();toast('¡Gracias! Tu mejora ha sido enviada ✦')}
+function openImprovements(){
+  if(state.role!=='founder'){toast('Solo la fundadora puede ver este buzón');return}
+  const items=state.improvements.length
+    ? state.improvements.map(x=>'<div class="event"><b>'+x.type+'</b><div class="mut" style="margin-top:5px">'+String(x.text).replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div><div class="mut" style="margin-top:6px;font-size:9px">'+x.date+'</div></div>').join('')
+    : '<div class="notice">Todavía no hay mejoras enviadas.</div>';
+  openM('<div class="ey">ARX CONTROL</div><h2>Mejoras de la comunidad</h2><div class="mut">Aquí puedes leer todas las propuestas enviadas por las usuarias.</div><div style="margin-top:12px">'+items+'</div>');
+}
+function openNotifications(){show('notifications');$('notifBadge').style.display='none'}
+function claimMission(){if(state.missionClaimed){toast('Ya has reclamado la recompensa de hoy');return}state.missionClaimed=true;save();toast('+100 XP · misión completada ✦')}
+const arxQuestions=[
+'¿Cuál sería tu domingo perfecto?',
+'¿Qué pequeño detalle consigue alegrarte un día malo?',
+'¿Dónde te irías mañana si pudieras viajar gratis?',
+'¿Qué canción describe tu semana?',
+'¿Qué cosa absurda defenderías hasta la muerte?',
+'¿Qué lugar te hace sentir en casa?',
+'¿Qué plan te parece perfecto para conocer a alguien?',
+'¿Qué sueño todavía tienes pendiente?',
+'¿Qué película puedes ver mil veces?',
+'¿Qué valoras más cuando conoces a alguien?',
+'¿Mar, montaña o ciudad?',
+'¿Qué te gustaría aprender algún día?',
+'¿Cuál es tu pequeño placer culpable?',
+'¿Qué harías con un día completamente libre?',
+'¿Qué viaje nunca olvidarás?',
+'¿Qué gesto te hace confiar en alguien?'
+];
+const discoverPeople=[];
+function dailyQuestionKey(){return Math.floor(Date.now()/86400000)}
+function renderDiscover(){
+ const key=dailyQuestionKey(); const q=arxQuestions[key%arxQuestions.length];
+ $('dailyQuestion').textContent=q; $('questionDate').textContent='PREGUNTA · '+new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long'});
+ const ans=state.dailyAnswers[key]; if(ans){$('dailyAnswer').value=ans.text||'';$('dailyAnswer').disabled=true;$('answerStatus').textContent='✓ Tu respuesta está publicada para la comunidad.';$('dailyAnswer').style.opacity='.65'}else{$('dailyAnswer').disabled=false;$('answerStatus').textContent=''}
+ const el=$('dailyAnswers'); if(el){el.innerHTML='<div class="notice">Todavía no hay respuestas de la comunidad para mostrar.</div>'}
+}
+function saveDailyAnswer(){const key=dailyQuestionKey();if(state.dailyAnswers[key]){toast('Ya has respondido la pregunta de hoy');return}const text=$('dailyAnswer').value.trim();if(text.length<3){toast('Escribe una respuesta antes de publicar');return}state.dailyAnswers[key]={text,date:new Date().toISOString()};save();renderDiscover();toast('Respuesta publicada ✦')}
+function surpriseMe(){if(!discoverPeople.length){toast('Todavía no hay perfiles disponibles para descubrir.');return}const p=discoverPeople[Math.floor(Math.random()*discoverPeople.length)];const common=p.interests.slice(0,3);openM('<div class="ey">✦ EL DESCUBRIMIENTO DE HOY</div><h2>ARX ha encontrado algo</h2><div class="card" style="margin-top:12px"><div class="row"><div class="mini">✦</div><div><b>'+esc(p.name)+'</b><div class="mut">Perfil público · ubicación privada</div></div></div><div class="tags">'+common.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="mut" style="margin-top:12px"><b>Lo que os une:</b><br>'+esc(p.prompt)+'</div></div><button class="btn" onclick="openDiscoveryProfile(\''+p.id+'\')">Descubrir su mundo</button>');}
+function getPerson(id){return discoverPeople.find(p=>p.id===id)||discoverPeople[0]}
+function openDiscoveryProfile(id){
+ const p=getPerson(id);
+ const connected=state.matches.includes(p.id);
+ const pending=state.pendingConnections.includes(p.id);
+ closeM();
+ const photo=p.photo||p.avatar_url||'';
+ const photoHtml=photo
+   ? '<img src="'+esc(photo)+'" alt="Foto de perfil" style="width:92px;height:92px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">'
+   : '<div class="profile-avatar fallback" style="width:92px;height:92px;margin:0 auto 12px">✦</div>';
+ openM('<div class="ey">PERFIL PÚBLICO · PRIVACIDAD ARX</div>'+photoHtml+'<h2>'+esc(p.name)+' · '+p.age+'</h2><div class="mut">📍 Ubicación privada · Solo muestra lo que ha decidido compartir</div><div class="tags">'+p.interests.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="card" style="margin-top:12px"><b>Bio</b><div class="mut" style="margin-top:6px">'+esc(p.bio)+'</div></div><div class="card" style="margin-top:10px"><b>Respuesta de hoy</b><div style="margin-top:6px">“'+esc(p.prompt)+'”</div></div>'+(connected?'<button class="btn" onclick="closeM();show(\'privateChat\')">💬 Abrir chat · Conexión mutua</button>':pending?'<button class="btn ghost" disabled>⌁ Conexión enviada · esperando respuesta</button>':'<button class="btn" onclick="sendConnection(\''+p.id+'\')">✦ Enviar conexión</button><button class="btn ghost" onclick="openFlowerPicker(\''+esc(p.name)+'\')">🌹 Dejar una flor</button>'))}function sendConnection(id){if(state.pendingConnections.includes(id)){toast('Ya has enviado esta conexión');return}state.pendingConnections.push(id);save();closeM();toast('Solicitud enviada. El chat queda cerrado hasta que sea mutua ✦')}function discoverFromAnswer(id){openDiscoveryProfile(id)}
+function arrow(name){
+  if((state.arrows||0)<=0){toast('No tienes conexiones disponibles');return}
+  if(state.sent.includes(name)){toast('Ya has enviado una conexión');return}
+  state.arrows--; state.sent.push(name); save();
+  $('arrowList')?.remove(); toast('Solicitud de conexión enviada ✦');
+}
+function send(){let i=$('input'),t=i.value.trim();if(!t)return;appendTextMessage(t,true);i.value=''}
+function appendTextMessage(t,me=false){let m=document.createElement('div');m.className='msg'+(me?' me':'');m.textContent=t;$('messages').appendChild(m);$('messages').scrollTop=$('messages').scrollHeight}
+function pickGif(){$('gifInput').click()}
+function attachGif(e){const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);let m=document.createElement('div');m.className='msg me media-msg';let img=document.createElement('img');img.src=url;img.alt='GIF';m.appendChild(img);$('messages').appendChild(m);e.target.value='';toast('GIF añadido al chat')}
+function pickPhoto(){$('photoInput').click()}
+function attachPhoto(e){const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);let m=document.createElement('div');m.className='msg me media-msg';let img=document.createElement('img');img.src=url;img.alt='Foto';m.appendChild(img);$('messages').appendChild(m);e.target.value='';toast('Foto añadida al chat')}
+function pickFile(){$('fileInput').click()}
+function attachFile(e){const f=e.target.files[0];if(!f)return;appendTextMessage('📎 '+f.name,true);e.target.value='';toast('Archivo adjuntado')}
+let mediaRecorder=null,audioChunks=[];
+async function toggleAudio(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();return}if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){toast('Tu navegador no permite grabar audio aquí');return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});audioChunks=[];mediaRecorder=new MediaRecorder(stream);$('audioStatus').textContent='🔴 Grabando… pulsa Audio otra vez para terminar';mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(audioChunks,{type:'audio/webm'});const url=URL.createObjectURL(blob);let m=document.createElement('div');m.className='msg me audio-msg';m.innerHTML='🎙 <audio controls src="'+url+'"></audio>';$('messages').appendChild(m);$('audioStatus').textContent='';toast('Audio enviado al chat')};mediaRecorder.start()}catch(e){$('audioStatus').textContent='';toast('Necesitas permitir el micrófono')}
+}
+function openReactionPicker(){openM('<div class="ey">CHAT ARX</div><h2>Enviar reacción</h2><div class="tags" style="margin-top:14px">'+['❤️','😂','😍','✨','🔥','🫶','🥹','🌹'].map(x=>'<button class="toolbtn" onclick="appendTextMessage(\''+x+'\',true);closeM()">'+x+'</button>').join('')+'</div>')}
+function openPoll(){openM('<div class="ey">CHAT ARX</div><h2>Crear encuesta</h2><div class="form"><label>PREGUNTA<input id="pollQ" placeholder="¿Qué hacemos este finde?"></label><label>OPCIÓN 1<input id="poll1" placeholder="Café"></label><label>OPCIÓN 2<input id="poll2" placeholder="Paseo"></label><button class="btn" onclick="sendPoll()">Enviar encuesta</button></div>')}
+function sendPoll(){const q=$('pollQ').value||'¿Qué hacemos?';const a=$('poll1').value||'Opción 1';const b=$('poll2').value||'Opción 2';openM('');closeM();let m=document.createElement('div');m.className='msg me';m.innerHTML='<b>▣ '+q+'</b><div class="tags"><button class="toolbtn" onclick="toast(\'Votaste por '+a+'\')">'+a+'</button><button class="toolbtn" onclick="toast(\'Votaste por '+b+'\')">'+b+'</button></div>';$('messages').appendChild(m)}
+function openPlan(person){openM('<div class="ey">PLAN ARX · '+person+'</div><h2>¿Qué os apetece?</h2><div class="flower-modal-grid"><button class="flower-choice" onclick="sendPlan(\'☕ Café\');closeM()">☕ Café</button><button class="flower-choice" onclick="sendPlan(\'🎬 Cine\');closeM()">🎬 Cine</button><button class="flower-choice" onclick="sendPlan(\'🚶 Paseo\');closeM()">🚶 Paseo</button><button class="flower-choice" onclick="sendPlan(\'🎮 Gaming\');closeM()">🎮 Gaming</button></div>')}
+function sendPlan(plan){appendTextMessage('✦ Propongo un plan: '+plan,true);toast('Propuesta enviada')}
+function openDropMap(){
+openM('<div class="ey">✦ ARX DROPS</div><h2>Mapa de Drops</h2><div class="mut">Estas zonas son puntos de búsqueda de Drops. No representan la ubicación de ninguna persona.</div><div class="map" style="margin-top:14px"><div class="mapinfo">✦ ZONAS DE BÚSQUEDA</div><div class="drop-zone dz1" onclick="closeM();drop(\'Centro ARX\')">✦<br><small>Centro ARX</small></div><div class="drop-zone dz2" onclick="closeM();drop(\'Zona Aurora\')">✦<br><small>Zona Aurora</small></div><div class="drop-zone dz3" onclick="closeM();drop(\'Paseo ARX\')">✦<br><small>Paseo ARX</small></div><div class="drop" style="left:57%;top:39%" onclick="closeM();drop(\'Centro ARX\')">✦</div></div><button class="btn ghost" onclick="closeM()">Volver a Drops</button>');
+}
+
+function openVitrine(n){
+const locked=n>2;
+if(locked){openM('<div class="ey">🪟 VITRINA #0'+n+'</div><h2>Figura bloqueada</h2><div class="mut">Encuentra y desbloquea este Drop para descubrir la figura.</div><button class="btn" onclick="closeM()">Entendido</button>');return}
+openM('<div class="vitrine-viewer"><div class="ey">🪟 VITRINA #0'+n+'</div><div class="vitrine-3d" id="vitrine3d" ontouchmove="rotateVitrine(event)">✦</div><h2>Figura ARX #0'+n+'</h2><div class="mut">Vista de colección · 360° preparada</div><div class="viewer-controls"><button class="btn ghost" onclick="toast(\'Gira la figura con el dedo ✦\')">↔ 360°</button><button class="btn ghost" onclick="closeM()">Cerrar</button></div></div>');
+}
+function rotateVitrine(e){const el=$('vitrine3d');if(!el)return;const t=e.touches&&e.touches[0];if(t){el.style.transform='rotateY('+(t.clientX%360)+'deg) rotateX('+(t.clientY%20-10)+'deg)'}}
+
+function drop(zone='Zona ARX'){
+  const key='drop-'+zone.replace(/\W/g,'').toLowerCase();
+  const progress=state.dropProgress[key]||{stage:0,found:false};
+  const stages=[
+    {title:'Pista 1 · La comunidad',text:'La primera pista no está dentro de ARX. Revisa la comunidad de WhatsApp o la publicación de ARX en redes sociales.'},
+    {title:'Pista 2 · Código escondido',text:'Busca un código oculto en una imagen, vídeo, historia o mensaje de ARX. Introduce el código para avanzar.'},
+    {title:'Pista 3 · Última pieza',text:'La última pista puede estar dentro de ARX. Resuelve el pequeño acertijo para encontrar la figura.'}
+  ];
+  if(progress.found){openM('<div class="ey">ARX DROP</div><h2>Ya has conseguido este Drop ✦</h2><div class="mut">Esta zona guarda una figura que ya forma parte de tu colección.</div>');return}
+  const st=stages[Math.min(progress.stage,stages.length-1)];
+  let html='<div class="ey">ARX DROP · '+esc(zone)+'</div><h2>'+st.title+'</h2><div class="mut">'+st.text+'</div><div class="drop-clue"><b>🔎 Objetivo</b><div class="mut" style="margin-top:6px">No damos coordenadas exactas. Los Drops se encuentran mediante pistas, nunca mediante la ubicación de personas.</div></div>';
+  if(progress.stage===0) html+='<button class="btn" onclick="advanceDrop(\''+esc(key)+'\')">He encontrado la pista</button>';
+  else if(progress.stage===1) html+='<div class="form" style="margin-top:12px"><label>CÓDIGO ENCONTRADO<input id="dropCode" class="code-box" placeholder="ARX-XXXX"></label><button class="btn" onclick="checkDropCode(\''+esc(key)+'\')">Comprobar código</button></div>';
+  else html+='<div class="form" style="margin-top:12px"><label>ÚLTIMA PISTA<textarea id="dropAnswer" placeholder="¿Qué crees que esconde ARX?"></textarea></label><button class="btn" onclick="solveDrop(\''+esc(key)+'\')">Resolver Drop</button></div>';
+  openM(html);
+}
+function advanceDrop(key){state.dropProgress[key]={stage:1,found:false};save();closeM();drop(key.replace('drop-',''));}
+function checkDropCode(key){const code=($('dropCode').value||'').trim().toUpperCase();const valid=['ARX-AURORA','ARX-7K92','ARX-ORBIT'];if(!valid.includes(code)){toast('Código incorrecto. Busca la pista en la comunidad o redes ✦');return}state.dropProgress[key]={stage:2,found:false};save();closeM();drop(key.replace('drop-',''));}
+function solveDrop(key){const answer=($('dropAnswer').value||'').trim();if(answer.length<4){toast('Necesitas completar la última pista');return}state.dropProgress[key]={stage:3,found:false};save();claimDropFigure(key);}
+function claimDropFigure(key){const figureId='ARX-DROP-'+key.replace('drop-','').toUpperCase();if(state.collectedFigures.includes(figureId)){state.dropProgress[key].found=true;save();toast('Esta figura ya está en tu colección');closeM();return}state.collectedFigures.unshift(figureId);state.dropProgress[key]={stage:3,found:true};save();openM('<div class="ey">DROP DESBLOQUEADO</div><h2>🎉 Has encontrado una figura 3D</h2><div class="viewer"><div class="big3d">🦋</div></div><div class="mut">La figura es la única recompensa de este Drop. Se ha añadido a tu colección.</div><button class="btn" onclick="closeM();show(\'drops\')">Ver mi colección</button>')}
+function figure(e,r,d){openM('<div class="ey">FIGURA 3D</div><h2>'+r+'</h2><div class="mut">Coleccionable ARX · '+d+'</div><div class="viewer"><div class="big3d">'+e+'</div></div>')}
+function openEvent(){
+  if(!currentUser){toast('Necesitas iniciar sesión');return}
+  eventStep=1; openM(eventWizardHTML()); bindEventWizard();
+}
+async function createEvent(){
+  const name=($('evName')?.value||'').trim(),date=$('evDate')?.value||'',time=$('evTime')?.value||'',
+        place=($('evPlace')?.value||'').trim(),exactPlace=($('evExactPlace')?.value||'').trim(),
+        max=parseInt($('evMax')?.value||'10',10),desc=($('evDesc')?.value||'').trim(),
+        type=$('evType')?.value||'Quedada',cover=($('evCover')?.value||'').trim();
+  if(!name||!date||!time||!place){toast('Completa nombre, fecha, hora y zona');return false}
+  if(!Number.isInteger(max)||max<2){toast('El aforo mínimo es de 2 personas');return false}
+  if(!arxSupabase||!currentUser){toast('Tu sesión no está disponible.');return false}
+  const base={creator_id:currentUser.id,name,event_date:date,event_time:time,place,max_attendees:max,description:desc||null};
+  const extended={...base,exact_place:exactPlace||null,event_type:type,cover_url:cover||null};
+  const button=document.querySelector('#modalContent .arx-publish');
+  if(button){button.disabled=true;button.textContent='Publicando…'}
+  let result=await arxSupabase.from('arx_events').insert(extended).select('*').single();
+  if(result.error && /column|schema cache/i.test(result.error.message||'')){
+    result=await arxSupabase.from('arx_events').insert(base).select('*').single();
+  }
+  if(result.error){
+    console.error('ARX event insert:',result.error);
+    const msg=(result.error.message||'').toLowerCase();
+    if(result.error.code==='42501'||msg.includes('policy')||msg.includes('permission')) toast('Supabase ha bloqueado la publicación por permisos.');
+    else if(msg.includes('relation')||msg.includes('arx_events')||result.error.code==='42p01') toast('La tabla arx_events aún no está creada en Supabase.');
+    else toast('No se pudo publicar el evento.');
+    if(button){button.disabled=false;button.textContent='Publicar experiencia ✦'}
+    return false;
+  }
+  closeM();show('map');await loadEvents();toast('Experiencia publicada ✦');return true;
+}
+
+async function loadEvents(){
+  if(!arxSupabase||!currentUser)return;
+  let result=await arxSupabase.from('arx_events').select('*').order('event_date',{ascending:true}).order('event_time',{ascending:true});
+  if(result.error && /column|schema cache/i.test(result.error.message||'')){
+    result=await arxSupabase.from('arx_events').select('id,creator_id,name,event_date,event_time,place,max_attendees,description').order('event_date',{ascending:true}).order('event_time',{ascending:true});
+  }
+  if(result.error){console.error('ARX load events:',result.error);return renderEvents()}
+  let attendance=[];
+  const a=await arxSupabase.from('arx_event_attendees').select('event_id').eq('user_id',currentUser.id);
+  if(!a.error)attendance=a.data||[];
+  const ids=new Set(attendance.map(x=>String(x.event_id)));
+  state.events=(result.data||[]).map(ev=>({id:ev.id,creator_id:ev.creator_id,name:ev.name,date:ev.event_date,time:String(ev.event_time||'').slice(0,5),place:ev.place,exactPlace:ev.exact_place||'',max:ev.max_attendees,desc:ev.description||'',type:ev.event_type||'Experiencia',cover:ev.cover_url||'',attending:ids.has(String(ev.id))}));
+  save();renderEvents();renderEventRadar();
+}
+
+async function attendEvent(id){
+  if(!arxSupabase||!currentUser){toast('Tu sesión no está disponible');return}
+  const ev=state.events.find(x=>String(x.id)===String(id));
+  if(!ev)return;
+  try{
+    if(ev.attending){
+      const {error}=await arxSupabase.from('arx_event_attendees').delete()
+        .eq('event_id',id).eq('user_id',currentUser.id);
+      if(error){toast('No se pudo cancelar la asistencia');return}
+      ev.attending=false;save();toast('Has cancelado tu asistencia');return;
+    }
+    const {error}=await arxSupabase.from('arx_event_attendees')
+      .insert({event_id:id,user_id:currentUser.id});
+    if(error){
+      toast(error.code==='23505'?'Ya estás apuntada a este evento':'No se pudo registrar tu asistencia');
+      return;
+    }
+    ev.attending=true;save();toast('Te has apuntado al evento ✦');
+  }catch(err){console.error(err);toast('No se pudo actualizar tu asistencia')}
+}
+function renderDrops(){
+ const el=$('collectionList'); if(!el)return;
+ if(!state.collectedFigures.length){el.innerHTML='<div class="notice">Tu colección está vacía. Cuando consigas una figura 3D mediante un Drop aparecerá aquí.</div>';}
+ else {el.innerHTML=state.collectedFigures.map(id=>{const icon=id.includes('AURORA')?'🦋':id.includes('ZONAAURORA')?'🪐':'🌙';return '<div class="figure" onclick="figure(\''+icon+'\',\'Figura coleccionable\',\'Hoy\')"><div class="rare">3D</div><div class="toy">'+icon+'</div><div class="date">Coleccionada</div></div>'}).join('');}
+ const vault=$('vaultSection');
+ if(vault){if(state.collectedFigures.length){vault.innerHTML='<div class="sec">VITRINA 360°</div><div class="vault"><div class="vault-top"><div><div class="vault-title">Vitrina ARX</div><div class="mut">Tu figura 3D desbloqueada</div></div><span class="vault-badge">DESBLOQUEADA</span></div><div class="viewer-premium"><div class="big3d">🦋</div></div><div class="vault-controls"><button onclick="toast(\'Vista 360° activa ✦\')">↻ 360°</button><button onclick="toast(\'Zoom de vitrina\')">＋ Zoom</button><button onclick="toast(\'Pieza destacada\')">✦ Destacar</button></div></div>';}else vault.innerHTML='';}
+}
+function renderEvents(){
+  const el=$('events');if(!el)return;
+  const arr=Array.isArray(state.events)?state.events:[];
+  if(!arr.length){el.innerHTML='<div class="card arx-empty"><div class="ey">✦ PRIMERA EXPERIENCIA</div><h3>Aún no hay planes publicados.</h3><div class="mut">Crea la primera experiencia ARX.</div><button class="btn" type="button" onclick="openEvent()">＋ Crear experiencia</button></div>';return}
+  el.innerHTML=arr.map(ev=>{
+    const cover=ev.cover?'<div class="event-cover" style="background-image:url('+esc(ev.cover)+')"></div>':'<div class="event-cover event-cover-empty"><span>✦</span></div>';
+    return '<article class="event-card">'+cover+'<div class="event-card-body"><div class="ey">'+esc(ev.type)+'</div><h3>'+esc(ev.name)+'</h3><div class="event-meta"><span>◷ '+esc(ev.date)+'</span><span>'+esc(ev.time)+'</span></div><div class="event-place">⌖ '+esc(ev.place)+'</div>'+(ev.desc?'<p class="mut event-desc">'+esc(ev.desc)+'</p>':'')+'<div class="event-footer"><span>👥 hasta '+esc(ev.max)+'</span><button class="btn ghost" type="button" onclick="openEventDetails('+JSON.stringify(ev.id)+')">Ver experiencia →</button></div></div></article>';
+  }).join('');
+}
+function esc(v){return String(v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function openInterests(){const opts=['✈ Viajes','☕ Cafés','🎮 Gaming','♫ Indie','🎬 Cine','🎨 Arte','🏃 Deporte','🍳 Cocina','🌿 Naturaleza','📚 Libros','🎧 Música','🐾 Animales','🎮 Juegos','✈️ Escapadas','🌙 Nocturna','☀️ Madrugadora'];openM('<div class="ey">MI PERFIL</div><h2>Elige tus intereses</h2><div class="mut">Selecciona todos los que quieras. Se mostrarán en tu perfil y ayudarán a personalizar Descubrir.</div><div id="interestPicker" class="interest-picker">'+opts.map(o=>'<button class="tag interest-option '+(state.interests.includes(o)?'selected':'')+'" data-interest="'+esc(o)+'" onclick="this.classList.toggle(\'selected\')">'+o+'</button>').join('')+'</div><button class="btn" onclick="saveInterests()">Guardar intereses</button>')}
+async function saveInterests(){const interests=[...document.querySelectorAll('#interestPicker .interest-option.selected')].map(x=>x.dataset.interest);if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}const {error}=await arxSupabase.from('arx_profiles').update({interests}).eq('id',currentUser.id);if(error){toast('No se pudieron guardar los intereses');return}state.interests=interests;save();closeM();toast('Intereses guardados ✦')}
+function chooseProfilePhoto(){$('profilePhotoInput').click()}
+async function photoSelected(e){const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Selecciona una imagen');return}if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}if(f.size>5*1024*1024){toast('La foto debe pesar menos de 5 MB');return}const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=currentUser.id+'/avatar.'+ext;const {error:uploadError}=await arxSupabase.storage.from('arx-avatars').upload(path,f,{upsert:true,contentType:f.type});if(uploadError){toast('No se pudo subir la foto: '+uploadError.message);return}const {data}=arxSupabase.storage.from('arx-avatars').getPublicUrl(path);const url=data.publicUrl+'?v='+Date.now();const {error:dbError}=await arxSupabase.from('arx_profiles').update({avatar_url:url}).eq('id',currentUser.id);if(dbError){toast('Foto subida, pero no se pudo guardar el perfil');return}state.photo=url;save();toast('Foto de perfil actualizada ✦')}
+function editProfile(){openM('<div class="ey">MI ESPACIO ARX</div><h2>Editar perfil</h2><div class="profile-edit"><label>Tu nombre<input id="editName" maxlength="30" value="'+esc(state.displayName||'Aoi')+'" placeholder="El nombre que quieras mostrar"></label><label>Tu edad<input id="editAge" type="number" min="18" max="120" value="'+esc(state.age||18)+'"></label><label>Tu biografía<textarea id="editBio" maxlength="220" placeholder="Cuéntale a ARX un poco sobre ti…">'+esc(state.bio||'')+'</textarea></label><button class="btn" onclick="saveProfile()">Guardar cambios</button></div>')}
+async function saveProfile(){
+  const n=$('editName').value.trim();
+  const age=parseInt($('editAge').value,10);
+  const b=$('editBio').value.trim();
+  if(!n){toast('El nombre no puede estar vacío');return}
+  if(!Number.isInteger(age)||age<18||age>120){toast('Introduce una edad válida (18+)');return}
+  if(!currentUser||!arxSupabase){toast('Necesitas iniciar sesión');return}
+
+  // arx_profiles usa "username" para el nombre. No usar "display_name" aquí.
+  const {error}=await arxSupabase.from('arx_profiles')
+    .update({username:n,age:age,bio:b})
+    .eq('id',currentUser.id);
+
+  if(error){
+    console.error('Error guardando perfil:',error);
+    toast('No se pudo guardar el perfil');
+    return;
+  }
+
+  // También mantenemos el nombre/bio en los metadatos de Auth.
+  const {error:authError}=await arxSupabase.auth.updateUser({
+    data:{display_name:n,bio:b}
+  });
+
+  if(authError){
+    console.warn('Perfil guardado, pero no se actualizaron los metadatos:',authError);
+  }
+
+  state.displayName=n;
+  state.age=age;
+  state.bio=b;
+  save();
+  closeM();
+  toast('Perfil actualizado ✦');
+}
+function renderProfile(){const name=state.displayName||'Aoi';if($('profileName'))$('profileName').textContent=name;if($('profileAge'))$('profileAge').textContent=state.age?'🎂 '+state.age+' años':'';if($('homeName'))$('homeName').textContent=name||'Tu nombre';if($('homeAge'))$('homeAge').textContent=state.age?'🎂 '+state.age+' años':'';if($('profileBio'))$('profileBio').textContent=state.bio||'';const av=$('profileAvatar');if(av){if(state.photo){av.classList.remove('fallback');av.innerHTML='<img src="'+state.photo.replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'}else{av.classList.add('fallback');av.innerHTML='✦'}}const hav=$('homeAvatar');if(hav){if(state.photo){hav.innerHTML='<img src="'+state.photo.replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'}else{hav.innerHTML='<div class="fallback">✦</div>'}}}
+function renderInterests(){const html=(state.interests||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')||'<span class="mut">Todavía no has elegido intereses.</span>';if($('profileInterests'))$('profileInterests').innerHTML=html;if($('homeInterests'))$('homeInterests').innerHTML=html}
+function openFlowerPicker(person='una conexión'){const flowers=[['🌹','Rosa Aurora',10],['🌷','Tulipán',15],['🌸','Sakura',25],['🪻','Lavanda Nocturna',30],['🥀','Rosa Obsidiana',50],['✨','Flor Celestial',100]];openM('<div class="ey">ARX GIFT</div><h2>Enviar una flor a '+esc(person)+'</h2><div class="mut">Saldo actual: <b>✦ '+state.tokens+' tokens</b></div><div class="flower-modal-grid">'+flowers.map(f=>'<button class="flower-choice" onclick="sendFlower(\''+f[0]+'\',\''+f[1]+'\','+f[2]+',\''+esc(person)+'\')"><div class="flower-3d">'+f[0]+'</div><b>'+f[1]+'</b><div class="mut">'+f[2]+' ✦</div></button>').join('')+'</div>')}
+function sendFlower(icon,name,cost,person){if(state.tokens<cost){toast('No tienes suficientes tokens');return}state.tokens-=cost;state.flowers.unshift({icon,name,cost,person,date:new Date().toLocaleDateString('es-ES')});save();closeM();toast(icon+' '+name+' enviada a '+person+' ✦')}
+function renderGarden(){const el=$('gardenList');if(!el)return;el.innerHTML=state.flowers.map(f=>'<div class="flower-card"><div class="flower-3d">'+esc(f.icon)+'</div><b>'+esc(f.name)+'</b><div class="mut">De: '+esc(f.person)+'</div><div class="mut">'+esc(f.date)+'</div></div>').join('')||'<div class="notice" style="grid-column:1/-1">Tu jardín está vacío. Envía o recibe tu primera flor ARX 🌹</div>'}
+function openTokenInfo(){openM('<div class="ey">TOKENS ARX</div><h2>Cómo conseguir tokens ✦</h2><div class="event"><b>🎯 Misiones</b><div class="mut">Completa misiones y recibe recompensas.</div></div><div class="event"><b>🎉 Eventos</b><div class="mut">Participa en actividades de la comunidad.</div></div><div class="event"><b>📅 Constancia</b><div class="mut">Premios por actividad y participación.</div></div>')}
+function openBirthday(){openM('<div class="ey">CALENDARIO</div><h2>Añadir cumpleaños</h2><div class="form"><label>NOMBRE<input id="bName" placeholder="Nombre"></label><label>FECHA<input id="bDate" type="date"></label><label>AVISO<select id="bNotice"><option>El mismo día</option><option>1 día antes</option><option selected>7 días antes</option><option>30 días antes</option></select></label><button class="btn" onclick="createBirthday()">Guardar cumpleaños</button></div>')}
+function createBirthday(){let n=$('bName').value||'Cumpleaños',d=$('bDate').value||'Fecha por confirmar',a=$('bNotice').value;$('birthdays').insertAdjacentHTML('afterbegin','<div class="event"><b>🎂 '+n+'</b><div class="mut">'+d+' · Aviso: '+a+'</div></div>');closeM();toast('Cumpleaños guardado')}
+function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
+function renderCal(){let c=$('cal'),d=['L','M','X','J','V','S','D'];c.innerHTML=d.map(x=>'<div class="day"><b>'+x+'</b></div>').join('');for(let i=1;i<=31;i++)c.innerHTML+='<div class="day '+(i===18?'eventday':'')+'">'+i+'</div>'}renderCal();
+save();
+window.addEventListener('DOMContentLoaded',async()=>{
+  $('gate').style.display='grid';
+  $('app').style.display='none';
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+  await bootAuth();
+});
+let eventStep=1;
+function eventWizardHTML(){return `<div class="arx-event-wizard"><div class="ey">ARX // CREATE</div><h2>Crear experiencia</h2><div class="mut">Construye un plan que quieras compartir.</div><div class="arx-stepbar"><span class="active" data-es="1">01</span><span data-es="2">02</span><span data-es="3">03</span><span data-es="4">04</span></div><div class="arx-event-step" data-step="1"><div class="ey">01 / IDEA</div><h3>¿Qué quieres crear?</h3><label>NOMBRE<input id="evName" maxlength="80" placeholder="Noche ARX"></label><label>TIPO<select id="evType"><option>Quedada</option><option>Cita</option><option>Plan</option><option>Fiesta</option><option>Viaje</option><option>Actividad</option><option>Otro</option></select></label></div><div class="arx-event-step hidden" data-step="2"><div class="ey">02 / VIBE</div><h3>Cuéntanos el plan.</h3><label>DESCRIPCIÓN<textarea id="evDesc" maxlength="500" rows="5" placeholder="¿Qué vais a hacer?"></textarea></label><label>PORTADA OPCIONAL<input id="evCover" type="url" placeholder="https://..."></label></div><div class="arx-event-step hidden" data-step="3"><div class="ey">03 / MOMENTO</div><h3>¿Cuándo y dónde?</h3><label>FECHA<input id="evDate" type="date"></label><label>HORA<input id="evTime" type="time"></label><label>ZONA VISIBLE<input id="evPlace" maxlength="120" placeholder="Málaga Centro"></label><label>LUGAR EXACTO PRIVADO<input id="evExactPlace" maxlength="180" placeholder="Dirección o punto de encuentro"></label><div class="arx-private-note">🔐 La zona general aparece en Explore. El lugar exacto se reserva para las asistentes.</div></div><div class="arx-event-step hidden" data-step="4"><div class="ey">04 / PLAZAS</div><h3>¿Cuántas personas?</h3><div class="arx-capacity"><button class="btn ghost" id="evMinus" type="button">−</button><strong id="evMaxPreview">10</strong><button class="btn ghost" id="evPlus" type="button">＋</button></div><input id="evMax" type="hidden" value="10"><div id="eventPreview" class="arx-preview"></div></div><div class="arx-wizard-actions"><button class="btn ghost" id="eventBack" type="button">← Atrás</button><button class="btn arx-publish" id="eventNext" type="button">Continuar →</button></div></div>`}
+function bindEventWizard(){const next=$('eventNext'),back=$('eventBack');const showStep=n=>{eventStep=Math.max(1,Math.min(4,n));document.querySelectorAll('.arx-event-step').forEach(x=>x.classList.toggle('hidden',Number(x.dataset.step)!==eventStep));document.querySelectorAll('.arx-stepbar span').forEach(x=>x.classList.toggle('active',Number(x.dataset.es)<=eventStep));back.style.visibility=eventStep>1?'visible':'hidden';next.textContent=eventStep===4?'Publicar experiencia ✦':'Continuar →';if(eventStep===4)updateEventPreview()};next.onclick=async()=>{if(eventStep<4){showStep(eventStep+1);return}await createEvent()};back.onclick=()=>showStep(eventStep-1);$('evMinus').onclick=()=>{const n=Math.max(2,Number($('evMax').value)-1);$('evMax').value=n;$('evMaxPreview').textContent=n;updateEventPreview()};$('evPlus').onclick=()=>{const n=Math.min(500,Number($('evMax').value)+1);$('evMax').value=n;$('evMaxPreview').textContent=n;updateEventPreview()};showStep(1)}
+function updateEventPreview(){const p=$('eventPreview');if(!p)return;p.innerHTML='<div class="arx-preview-card"><div class="ey">PREVISUALIZACIÓN</div><h3>'+esc(($('evName')?.value||'').trim()||'Tu experiencia')+'</h3><div class="mut">◷ '+esc($('evDate')?.value||'Fecha pendiente')+' · '+esc($('evTime')?.value||'Hora pendiente')+'</div><div class="mut">⌖ '+esc(($('evPlace')?.value||'Zona pendiente').trim())+'</div><div class="mut">👥 0 / '+esc($('evMax')?.value||10)+'</div><div class="arx-private-note">🔐 La ubicación exacta se compartirá únicamente con las asistentes.</div></div>'}
+function openEventDetails(id){const ev=state.events.find(x=>String(x.id)===String(id));if(!ev)return;const exact=ev.attending&&ev.exactPlace?'<div class="arx-private-note">🔐 <b>Punto de encuentro desbloqueado</b><br>'+esc(ev.exactPlace)+'<br><button class="btn ghost" style="margin-top:8px" type="button" onclick="openExactLocation('+JSON.stringify(ev.exactPlace)+')">Abrir en mapas →</button></div>':'<div class="arx-private-note">🔒 La ubicación exacta estará disponible para las asistentes.</div>';openM('<div class="arx-event-detail"><div class="ey">'+esc(ev.type)+'</div><h2>'+esc(ev.name)+'</h2><div class="mut">◷ '+esc(ev.date)+' · '+esc(ev.time)+'</div><div class="mut">⌖ '+esc(ev.place)+'</div>'+(ev.desc?'<p>'+esc(ev.desc)+'</p>':'')+exact+'<button class="btn arx-join" style="width:100%;margin-top:14px" type="button" onclick="attendEventAndRefresh('+JSON.stringify(ev.id)+')">'+(ev.attending?'✓ ESTÁS DENTRO':'ESTOY DENTRO ✦')+'</button></div>')}
+async function attendEventAndRefresh(id){await attendEvent(id);closeM();await loadEvents()}
+function openExactLocation(place){window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place),'_blank','noopener')}
+function renderEventRadar(){const radar=$('eventRadar');if(!radar)return;const arr=Array.isArray(state.events)?state.events:[];radar.innerHTML=arr.slice(0,8).map((ev,i)=>'<button class="arx-radar-point" type="button" title="'+esc(ev.name)+'" onclick="openEventDetails('+JSON.stringify(ev.id)+')" style="left:'+(12+((i*29)%76))+'%;top:'+(18+((i*43)%65))+'%">✦</button>').join('')}
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[data-event-filter]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-event-filter]').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}))});
+
+
+const DROP01_FIGURES=[
+{id:1,name:'FIGURA 01',rarity:'COMMON',clue:'La primera señal aparece donde ARX comienza a despertar.'},
+{id:2,name:'FIGURA 02',rarity:'UNCOMMON',clue:'Sigue la señal hasta el lugar donde las luces nunca duermen.'},
+{id:3,name:'FIGURA 03',rarity:'RARE',clue:'Busca una esquina que guarda historias de muchas noches.'},
+{id:4,name:'FIGURA 04',rarity:'EPIC',clue:'La señal está más cerca de lo que parece.'},
+{id:5,name:'FIGURA 05',rarity:'LEGENDARY',clue:'Solo aparece cuando las otras cuatro ya forman parte de tu colección.'}
+];
+function renderDrops(){
+ const grid=$('dropFigures');if(!grid)return;
+ const p=Number(state.dropProgress||0);
+ grid.innerHTML=DROP01_FIGURES.map(f=>{
+  const unlocked=p>=f.id, available=p>=f.id-1;
+  return `<button class="drop-figure ${unlocked?'unlocked':(available?'available':'locked')}" type="button" onclick="openDropFigure(${f.id})"><div class="drop-figure-art"><span>${unlocked?'✦':'?'}</span></div><div class="drop-figure-body"><div class="ey">${f.name}</div><strong>${f.rarity}</strong><small>${'◆'.repeat(f.id)}</small><em>${unlocked?'✓ CONSEGUIDA':available?'PISTA DISPONIBLE':'🔒 BLOQUEADA'}</em></div></button>`;
+ }).join('');
+ const pct=Math.round(p/5*100);
+ if($('dropProgressBar'))$('dropProgressBar').style.width=pct+'%';
+ if($('dropProgressText'))$('dropProgressText').textContent=p+' / 5 descubiertas';
+ if($('dropPercent'))$('dropPercent').textContent=pct+'%';
+ if($('dropCollectionCount'))$('dropCollectionCount').textContent=p+' / 5';
+ if($('dropMasterCard'))$('dropMasterCard').classList.toggle('complete',p>=5);
+}
+function openDrop01(){document.getElementById('dropFigures')?.scrollIntoView({behavior:'smooth',block:'start'});toast('DROP #01 · Elige una figura ✦')}
+function openDropFigure(id){
+ const f=DROP01_FIGURES.find(x=>x.id===id);if(!f)return;
+ const p=Number(state.dropProgress||0);
+ if(p<id-1){toast('Completa primero las figuras anteriores.');return}
+ const unlocked=p>=id;
+ openM(`<div class="drop-modal"><div class="ey">DROP #01 · FIGURA ${String(id).padStart(2,'0')}</div><h2>${esc(f.name)}</h2><div class="drop-modal-rarity">${esc(f.rarity)}</div><div class="drop-3d-preview ${unlocked?'is-unlocked':''}"><span>${unlocked?'✦':'?'}</span><small>VISOR 360°</small></div><div class="drop-clue-card"><div class="ey">SIGNAL · ${unlocked?'COMPLETED':'01 / 03'}</div><p>${esc(f.clue)}</p></div>${unlocked?'<div class="drop-private-note">✓ Figura añadida a tu colección.</div>':'<button class="btn" style="width:100%" type="button" onclick="solveDropFigure('+id+')">REVELAR PISTA →</button>'}</div>`);
+}
+function solveDropFigure(id){
+ const p=Number(state.dropProgress||0);
+ if(p>=id){openDropFigure(id);return}
+ if(p<id-1){toast('Primero completa las figuras anteriores.');return}
+ state.dropProgress=id;save();closeM();renderDrops();toast('✦ FIGURA '+String(id).padStart(2,'0')+' DESBLOQUEADA');
+ if(id===5)setTimeout(()=>openM('<div class="drop-complete"><div class="ey">DROP #01</div><h2>COMPLETE ✦</h2><div class="drop-complete-orbit">5 / 5</div><p>THE FIRST SIGNAL completado.</p><div class="drop-private-note">🏆 DROP MASTER desbloqueado.</div></div>'),350);
+}
+try{renderDrops()}catch(e){console.warn('ARX drops init',e)}
+
+</script>
+</body>
+</html>
