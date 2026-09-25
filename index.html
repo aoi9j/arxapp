@@ -242,7 +242,7 @@ const ARX_CONFIG_OK = !!(window.ARX_SUPABASE_URL && window.ARX_SUPABASE_KEY && !
 const arxSupabase = ARX_CONFIG_OK ? window.supabase.createClient(window.ARX_SUPABASE_URL, window.ARX_SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }) : null;
 let currentUser=null;
 let state=JSON.parse(localStorage.getItem('arx_v5_clean')||'{}'); state=Object.assign({code:"",logged:false,role:"member",community:"ARX",displayName:"",age:null,bio:"",photo:"",profileComplete:false,sent:[],matches:[],arrows:0,dailyClaim:"",improvements:[],missionClaimed:false,interests:[],tokens:0,flowers:[],events:[],dailyQuestionKey:"",dailyQuestionIndex:0,dailyAnswers:{},pendingConnections:[],collectedFigures:[],dropProgress:{},accountCreated:false},state); if(!Array.isArray(state.improvements))state.improvements=[]; if(!Array.isArray(state.interests))state.interests=[]; if(!Array.isArray(state.flowers))state.flowers=[]; if(!Array.isArray(state.events))state.events=[]; if(!Array.isArray(state.pendingConnections))state.pendingConnections=[]; if(!Array.isArray(state.collectedFigures))state.collectedFigures=[]; if(!state.dailyAnswers||typeof state.dailyAnswers!=='object')state.dailyAnswers={}; if(!state.dropProgress||typeof state.dropProgress!=='object')state.dropProgress={}; if(typeof state.tokens!=='number')state.tokens=0;
-function save(){localStorage.setItem('arx_v5_clean',JSON.stringify(state));if($('sentCount'))$('sentCount').textContent=state.sent.length;if($('matchCount'))$('matchCount').textContent=state.matches.length;if($('arrowBalance'))$('arrowBalance').textContent=state.arrows||0;if($('improvementCount'))$('improvementCount').textContent=state.improvements.length;if($('tokenBalance'))$('tokenBalance').textContent=state.tokens||0;renderInterests();renderGarden();renderEvents();renderProfile();renderDiscover();renderDrop01();}
+function save(){localStorage.setItem('arx_v5_clean',JSON.stringify(state));if($('sentCount'))$('sentCount').textContent=state.sent.length;if($('matchCount'))$('matchCount').textContent=state.matches.length;if($('arrowBalance'))$('arrowBalance').textContent=state.arrows||0;if($('improvementCount'))$('improvementCount').textContent=state.improvements.length;if($('tokenBalance'))$('tokenBalance').textContent=state.tokens||0;renderInterests();renderGarden();renderEvents();renderProfile();renderDiscover();renderDrops();}
 function showAuthError(message){ const el=$('loginError'); if(el) el.textContent=message||''; }
 async function finishAuth(user){
   currentUser=user;
@@ -529,6 +529,12 @@ function openDiscoveryProfile(id){
    ? '<img src="'+esc(photo)+'" alt="Foto de perfil" style="width:92px;height:92px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">'
    : '<div class="profile-avatar fallback" style="width:92px;height:92px;margin:0 auto 12px">✦</div>';
  openM('<div class="ey">PERFIL PÚBLICO · PRIVACIDAD ARX</div>'+photoHtml+'<h2>'+esc(p.name)+' · '+p.age+'</h2><div class="mut">📍 Ubicación privada · Solo muestra lo que ha decidido compartir</div><div class="tags">'+p.interests.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div><div class="card" style="margin-top:12px"><b>Bio</b><div class="mut" style="margin-top:6px">'+esc(p.bio)+'</div></div><div class="card" style="margin-top:10px"><b>Respuesta de hoy</b><div style="margin-top:6px">“'+esc(p.prompt)+'”</div></div>'+(connected?'<button class="btn" onclick="closeM();show(\'privateChat\')">💬 Abrir chat · Conexión mutua</button>':pending?'<button class="btn ghost" disabled>⌁ Conexión enviada · esperando respuesta</button>':'<button class="btn" onclick="sendConnection(\''+p.id+'\')">✦ Enviar conexión</button><button class="btn ghost" onclick="openFlowerPicker(\''+esc(p.name)+'\')">🌹 Dejar una flor</button>'))}function sendConnection(id){if(state.pendingConnections.includes(id)){toast('Ya has enviado esta conexión');return}state.pendingConnections.push(id);save();closeM();toast('Solicitud enviada. El chat queda cerrado hasta que sea mutua ✦')}function discoverFromAnswer(id){openDiscoveryProfile(id)}
+function arrow(name){
+  if((state.arrows||0)<=0){toast('No tienes conexiones disponibles');return}
+  if(state.sent.includes(name)){toast('Ya has enviado una conexión');return}
+  state.arrows--; state.sent.push(name); save();
+  $('arrowList')?.remove(); toast('Solicitud de conexión enviada ✦');
+}
 function send(){let i=$('input'),t=i.value.trim();if(!t)return;appendTextMessage(t,true);i.value=''}
 function appendTextMessage(t,me=false){let m=document.createElement('div');m.className='msg'+(me?' me':'');m.textContent=t;$('messages').appendChild(m);$('messages').scrollTop=$('messages').scrollHeight}
 function pickGif(){$('gifInput').click()}
@@ -545,6 +551,38 @@ function openPoll(){openM('<div class="ey">CHAT ARX</div><h2>Crear encuesta</h2>
 function sendPoll(){const q=$('pollQ').value||'¿Qué hacemos?';const a=$('poll1').value||'Opción 1';const b=$('poll2').value||'Opción 2';openM('');closeM();let m=document.createElement('div');m.className='msg me';m.innerHTML='<b>▣ '+q+'</b><div class="tags"><button class="toolbtn" onclick="toast(\'Votaste por '+a+'\')">'+a+'</button><button class="toolbtn" onclick="toast(\'Votaste por '+b+'\')">'+b+'</button></div>';$('messages').appendChild(m)}
 function openPlan(person){openM('<div class="ey">PLAN ARX · '+person+'</div><h2>¿Qué os apetece?</h2><div class="flower-modal-grid"><button class="flower-choice" onclick="sendPlan(\'☕ Café\');closeM()">☕ Café</button><button class="flower-choice" onclick="sendPlan(\'🎬 Cine\');closeM()">🎬 Cine</button><button class="flower-choice" onclick="sendPlan(\'🚶 Paseo\');closeM()">🚶 Paseo</button><button class="flower-choice" onclick="sendPlan(\'🎮 Gaming\');closeM()">🎮 Gaming</button></div>')}
 function sendPlan(plan){appendTextMessage('✦ Propongo un plan: '+plan,true);toast('Propuesta enviada')}
+function openDropMap(){
+openM('<div class="ey">✦ ARX DROPS</div><h2>Mapa de Drops</h2><div class="mut">Estas zonas son puntos de búsqueda de Drops. No representan la ubicación de ninguna persona.</div><div class="map" style="margin-top:14px"><div class="mapinfo">✦ ZONAS DE BÚSQUEDA</div><div class="drop-zone dz1" onclick="closeM();drop(\'Centro ARX\')">✦<br><small>Centro ARX</small></div><div class="drop-zone dz2" onclick="closeM();drop(\'Zona Aurora\')">✦<br><small>Zona Aurora</small></div><div class="drop-zone dz3" onclick="closeM();drop(\'Paseo ARX\')">✦<br><small>Paseo ARX</small></div><div class="drop" style="left:57%;top:39%" onclick="closeM();drop(\'Centro ARX\')">✦</div></div><button class="btn ghost" onclick="closeM()">Volver a Drops</button>');
+}
+
+function openVitrine(n){
+const locked=n>2;
+if(locked){openM('<div class="ey">🪟 VITRINA #0'+n+'</div><h2>Figura bloqueada</h2><div class="mut">Encuentra y desbloquea este Drop para descubrir la figura.</div><button class="btn" onclick="closeM()">Entendido</button>');return}
+openM('<div class="vitrine-viewer"><div class="ey">🪟 VITRINA #0'+n+'</div><div class="vitrine-3d" id="vitrine3d" ontouchmove="rotateVitrine(event)">✦</div><h2>Figura ARX #0'+n+'</h2><div class="mut">Vista de colección · 360° preparada</div><div class="viewer-controls"><button class="btn ghost" onclick="toast(\'Gira la figura con el dedo ✦\')">↔ 360°</button><button class="btn ghost" onclick="closeM()">Cerrar</button></div></div>');
+}
+function rotateVitrine(e){const el=$('vitrine3d');if(!el)return;const t=e.touches&&e.touches[0];if(t){el.style.transform='rotateY('+(t.clientX%360)+'deg) rotateX('+(t.clientY%20-10)+'deg)'}}
+
+function drop(zone='Zona ARX'){
+  const key='drop-'+zone.replace(/\W/g,'').toLowerCase();
+  const progress=state.dropProgress[key]||{stage:0,found:false};
+  const stages=[
+    {title:'Pista 1 · La comunidad',text:'La primera pista no está dentro de ARX. Revisa la comunidad de WhatsApp o la publicación de ARX en redes sociales.'},
+    {title:'Pista 2 · Código escondido',text:'Busca un código oculto en una imagen, vídeo, historia o mensaje de ARX. Introduce el código para avanzar.'},
+    {title:'Pista 3 · Última pieza',text:'La última pista puede estar dentro de ARX. Resuelve el pequeño acertijo para encontrar la figura.'}
+  ];
+  if(progress.found){openM('<div class="ey">ARX DROP</div><h2>Ya has conseguido este Drop ✦</h2><div class="mut">Esta zona guarda una figura que ya forma parte de tu colección.</div>');return}
+  const st=stages[Math.min(progress.stage,stages.length-1)];
+  let html='<div class="ey">ARX DROP · '+esc(zone)+'</div><h2>'+st.title+'</h2><div class="mut">'+st.text+'</div><div class="drop-clue"><b>🔎 Objetivo</b><div class="mut" style="margin-top:6px">No damos coordenadas exactas. Los Drops se encuentran mediante pistas, nunca mediante la ubicación de personas.</div></div>';
+  if(progress.stage===0) html+='<button class="btn" onclick="advanceDrop(\''+esc(key)+'\')">He encontrado la pista</button>';
+  else if(progress.stage===1) html+='<div class="form" style="margin-top:12px"><label>CÓDIGO ENCONTRADO<input id="dropCode" class="code-box" placeholder="ARX-XXXX"></label><button class="btn" onclick="checkDropCode(\''+esc(key)+'\')">Comprobar código</button></div>';
+  else html+='<div class="form" style="margin-top:12px"><label>ÚLTIMA PISTA<textarea id="dropAnswer" placeholder="¿Qué crees que esconde ARX?"></textarea></label><button class="btn" onclick="solveDrop(\''+esc(key)+'\')">Resolver Drop</button></div>';
+  openM(html);
+}
+function advanceDrop(key){state.dropProgress[key]={stage:1,found:false};save();closeM();drop(key.replace('drop-',''));}
+function checkDropCode(key){const code=($('dropCode').value||'').trim().toUpperCase();const valid=['ARX-AURORA','ARX-7K92','ARX-ORBIT'];if(!valid.includes(code)){toast('Código incorrecto. Busca la pista en la comunidad o redes ✦');return}state.dropProgress[key]={stage:2,found:false};save();closeM();drop(key.replace('drop-',''));}
+function solveDrop(key){const answer=($('dropAnswer').value||'').trim();if(answer.length<4){toast('Necesitas completar la última pista');return}state.dropProgress[key]={stage:3,found:false};save();claimDropFigure(key);}
+function claimDropFigure(key){const figureId='ARX-DROP-'+key.replace('drop-','').toUpperCase();if(state.collectedFigures.includes(figureId)){state.dropProgress[key].found=true;save();toast('Esta figura ya está en tu colección');closeM();return}state.collectedFigures.unshift(figureId);state.dropProgress[key]={stage:3,found:true};save();openM('<div class="ey">DROP DESBLOQUEADO</div><h2>🎉 Has encontrado una figura 3D</h2><div class="viewer"><div class="big3d">🦋</div></div><div class="mut">La figura es la única recompensa de este Drop. Se ha añadido a tu colección.</div><button class="btn" onclick="closeM();show(\'drops\')">Ver mi colección</button>')}
+function figure(e,r,d){openM('<div class="ey">FIGURA 3D</div><h2>'+r+'</h2><div class="mut">Coleccionable ARX · '+d+'</div><div class="viewer"><div class="big3d">'+e+'</div></div>')}
 function openEvent(){
   if(!currentUser){toast('Necesitas iniciar sesión');return}
   eventStep=1; openM(eventWizardHTML()); bindEventWizard();
@@ -611,6 +649,13 @@ async function attendEvent(id){
     }
     ev.attending=true;save();toast('Te has apuntado al evento ✦');
   }catch(err){console.error(err);toast('No se pudo actualizar tu asistencia')}
+}
+function renderDrops(){
+ const el=$('collectionList'); if(!el)return;
+ if(!state.collectedFigures.length){el.innerHTML='<div class="notice">Tu colección está vacía. Cuando consigas una figura 3D mediante un Drop aparecerá aquí.</div>';}
+ else {el.innerHTML=state.collectedFigures.map(id=>{const icon=id.includes('AURORA')?'🦋':id.includes('ZONAAURORA')?'🪐':'🌙';return '<div class="figure" onclick="figure(\''+icon+'\',\'Figura coleccionable\',\'Hoy\')"><div class="rare">3D</div><div class="toy">'+icon+'</div><div class="date">Coleccionada</div></div>'}).join('');}
+ const vault=$('vaultSection');
+ if(vault){if(state.collectedFigures.length){vault.innerHTML='<div class="sec">VITRINA 360°</div><div class="vault"><div class="vault-top"><div><div class="vault-title">Vitrina ARX</div><div class="mut">Tu figura 3D desbloqueada</div></div><span class="vault-badge">DESBLOQUEADA</span></div><div class="viewer-premium"><div class="big3d">🦋</div></div><div class="vault-controls"><button onclick="toast(\'Vista 360° activa ✦\')">↻ 360°</button><button onclick="toast(\'Zoom de vitrina\')">＋ Zoom</button><button onclick="toast(\'Pieza destacada\')">✦ Destacar</button></div></div>';}else vault.innerHTML='';}
 }
 function renderEvents(){
   const el=$('events');if(!el)return;
