@@ -1206,9 +1206,15 @@ function renderDrop01(){
  if(count)count.textContent=String(p).padStart(2,'0')+' / 05';
  if(feature)feature.textContent=String(p).padStart(2,'0')+' / 05';
  if(!grid)return;
- grid.innerHTML=ARX_DROP01.map(f=>{
-  const u=p>=f.id,a=p>=f.id-1;
-  return `<div class="vitrine-premium ${u?'owned':a?'available':'locked'}" data-click="openDropFigure(${f.id})"><div class="glass"><span>${u?f.icon:(a?'✦':'?')}</span></div><b>${String(f.id).padStart(2,'0')}</b><small>${u?'DESBLOQUEADA':a?'CÓDIGO REQUERIDO':'BLOQUEADA'}</small></div>`;
+ var RL={COMMON:'Com&uacute;n',UNCOMMON:'Poco com&uacute;n',RARE:'Rara',EPIC:'&Eacute;pica',LEGENDARY:'Legendaria'};
+ var LOCK='<svg class="vi" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>';
+ var SPARK='<svg class="vi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C12.7 8 14 10.3 19 12 14 13.7 12.7 16 12 21 11.3 16 10 13.7 5 12 10 10.3 11.3 8 12 3Z"/></svg>';
+ grid.innerHTML=ARX_DROP01.map(function(f){
+  var u=p>=f.id,a=p>=f.id-1,st=u?'owned':(a?'available':'locked'),inner,nm,sub;
+  if(u){inner=f.icon;nm=esc(f.name);sub=RL[f.rarity]||''}
+  else if(a){inner=SPARK;nm='Siguiente';sub='Introduce el c&oacute;digo'}
+  else{inner=LOCK;nm='&middot;&middot;&middot;';sub='Bloqueada'}
+  return '<div class="vitrine-premium '+st+' r-'+String(f.rarity).toLowerCase()+'" data-click="openDropFigure('+f.id+')"><em class="vno">'+String(f.id).padStart(2,'0')+'</em><div class="glass"><span>'+inner+'</span></div><b>'+nm+'</b><small>'+sub+'</small></div>';
  }).join('');
  const m=$('dropMasterCard');if(m)m.classList.toggle('complete',p===5);
 }
