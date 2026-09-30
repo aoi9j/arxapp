@@ -400,7 +400,7 @@ function show(id){
   if(id==='calendar'&&typeof renderCalendarData==='function')renderCalendarData();
   if(id==='garden'&&typeof renderGarden==='function'){renderGarden();if(typeof loadFlowers==='function')loadFlowers()}
   document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
-  const navId=(id==='garden'||id==='privateChat')?'matches':id;const nav=[...document.querySelectorAll('.bottom .nav')].find(n=>n.getAttribute('onclick')===`show('${navId}')`);
+  const navId=(id==='garden'||id==='privateChat')?'matches':id;const want="show('"+navId+"')";const nav=[...document.querySelectorAll('.bottom .nav')].find(n=>(n.getAttribute('data-click')||n.getAttribute('onclick'))===want);
   if(nav)nav.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
   (arxShowHooks[id]||[]).forEach(f=>{try{f()}catch(e){console.warn('ARX show hook:',id,e)}});
 }
