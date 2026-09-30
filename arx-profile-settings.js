@@ -1,0 +1,1 @@
+function toggleProfileSettings(){var p=document.getElementById('profileSettings'),b=document.getElementById('settingsToggle');if(!p)return;p.hidden=!p.hidden;b.classList.toggle('open',!p.hidden);b.setAttribute('aria-expanded',String(!p.hidden));if(!p.hidden)setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'})},60)}
