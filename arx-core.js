@@ -385,10 +385,10 @@ function applyRoleUI(){
   const badge=document.querySelector('.private');
   if(!badge)return;
   if(state.role==='founder'){
-    badge.textContent='✦ FUNDADORA · ACCESO TOTAL';
+    badge.textContent='Fundadora';
     badge.style.borderColor='#ff4fa366';
   }else{
-    badge.textContent='⌁ COMUNIDAD PRIVADA';
+    badge.textContent='Comunidad privada';
   }
 }
 const arxShowHooks={};
@@ -573,7 +573,7 @@ function renderFlowerInbox(){
  const b=$('navBadge');if(b){b.textContent=n.length;b.classList.toggle('hidden',!n.length)}
  if(!el)return;
  if(!n.length){el.innerHTML='';return}
- el.innerHTML='<div class="sec">FLORES NUEVAS · '+n.length+'</div>'+n.map(f=>{const x=flowerByKey(f.intent),ia=jq(f.id);return '<div class="card fi-card">'+flowerArt(x.key)+'<b>'+esc(x.name)+'</b><div class="mut" style="font-size:12px">'+esc(x.desc)+'</div><div class="fi-from">De '+esc(f.from)+' · '+esc(f.date)+'</div>'+(f.contextText?'<div class="flower-note">↳ “'+esc(f.contextText)+'”</div>':'')+(f.card?'<div class="flower-note">“'+esc(f.card)+'”</div>':'<div class="flower-note">Solo flor</div>')+'<div class="fi-acts"><button class="btn" data-click="arxFlowerAccept('+ia+')">Abrir conexión ✦</button><button class="btn ghost" data-click="arxFlowerDecline('+ia+')">Ahora no</button></div></div>'}).join('');
+ el.innerHTML='<div class="sec">Flores nuevas · '+n.length+'</div>'+n.map(f=>{const x=flowerByKey(f.intent),ia=jq(f.id);return '<div class="card fi-card">'+flowerArt(x.key)+'<b>'+esc(x.name)+'</b><div class="mut" style="font-size:12px">'+esc(x.desc)+'</div><div class="fi-from">De '+esc(f.from)+' · '+esc(f.date)+'</div>'+(f.contextText?'<div class="flower-note">↳ “'+esc(f.contextText)+'”</div>':'')+(f.card?'<div class="flower-note">“'+esc(f.card)+'”</div>':'<div class="flower-note">Solo flor</div>')+'<div class="fi-acts"><button class="btn" data-click="arxFlowerAccept('+ia+')">Abrir conexión ✦</button><button class="btn ghost" data-click="arxFlowerDecline('+ia+')">Ahora no</button></div></div>'}).join('');
 }
 window.arxFlowerAccept=async function(id){
  const f=(state.flowersIn||[]).find(x=>x.id===id);if(!f||!arxSupabase||!currentUser)return;
@@ -713,7 +713,7 @@ async function attendEvent(id){
 }
 function renderEvents(){
   const el=$('events');if(!el)return;const all=Array.isArray(state.events)?state.events:[];const arr=arxFiltered();if(!arr.length&&all.length){el.innerHTML='<div class="card arx-empty"><div class="ey">✦ SIN RESULTADOS</div><h3>Ningún plan con esos filtros.</h3><button class="btn" type="button" data-click="arxClear()">Ver todos los planes</button></div>';return}
-  if(!arr.length){el.innerHTML='<div class="card arx-empty"><div class="ey">✦ PRIMERA EXPERIENCIA</div><h3>Aún no hay planes publicados.</h3><div class="mut">Crea la primera experiencia ARX.</div><button class="btn" type="button" data-click="return openEvent()">＋ Crear experiencia</button></div>';return}
+  if(!arr.length){el.innerHTML='<div class="card arx-empty"><h3>Aún no hay planes publicados.</h3><div class="mut">Crea la primera experiencia ARX.</div><button class="btn" type="button" data-click="return openEvent()">＋ Crear experiencia</button></div>';return}
   el.innerHTML=arr.map(ev=>{const cover=ev.cover?'<div class="event-cover" style="background-image:url('+cssUrl(ev.cover)+')"></div>':'<div class="event-cover event-cover-empty"><span>✦</span></div>';return '<article class="event-card">'+cover+'<div class="event-card-body"><div class="ey">'+esc(ev.type)+'</div><h3>'+esc(ev.name)+'</h3><div class="event-meta"><span>◷ '+esc(ev.date)+'</span><span>'+esc(ev.time)+'</span></div><div class="event-place">⌖ '+esc(ev.place)+'</div>'+(ev.desc?'<p class="mut event-desc">'+esc(ev.desc)+'</p>':'')+'<div class="event-footer"><span>👥 hasta '+esc(ev.max)+'</span><button class="btn ghost" type="button" data-click="openEventDetails('+jq(ev.id)+')">Ver experiencia →</button></div></div></article>'}).join('');
 }
 function esc(v){return String(v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -794,7 +794,7 @@ async function saveProfile(){
   closeM();
   toast('Perfil actualizado ✦');
 }
-function renderProfile(){const name=state.displayName||'Aoi';if($('profileName'))$('profileName').textContent=name;if($('profileAge'))$('profileAge').textContent=state.age?'🎂 '+state.age+' años':'';if($('homeName'))$('homeName').textContent=name||'Tu nombre';if($('homeAge'))$('homeAge').textContent=state.age?'🎂 '+state.age+' años':'';if($('profileBio'))$('profileBio').textContent=state.bio||'';const av=$('profileAvatar');if(av){if(state.photo){av.classList.remove('fallback');av.innerHTML='<img src="'+esc(state.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px">'}else{av.classList.add('fallback');av.innerHTML='✦'}}const hav=$('homeAvatar');if(hav){if(state.photo){hav.innerHTML='<img src="'+esc(state.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px">'}else{hav.innerHTML='<div class="fallback">✦</div>'}}}
+function renderProfile(){const name=state.displayName||'Aoi';if($('profileName'))$('profileName').textContent=name;if($('profileAge'))$('profileAge').textContent=state.age?'🎂 '+state.age+' años':'';if($('homeName'))$('homeName').textContent=name||'Tu nombre';if($('homeAge'))$('homeAge').textContent=state.age?''+state.age+' años':'';if($('profileBio'))$('profileBio').textContent=state.bio||'';const av=$('profileAvatar');if(av){if(state.photo){av.classList.remove('fallback');av.innerHTML='<img src="'+esc(state.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px">'}else{av.classList.add('fallback');av.innerHTML='✦'}}const hav=$('homeAvatar');if(hav){if(state.photo){hav.innerHTML='<img src="'+esc(state.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:22px">'}else{hav.innerHTML='<div class="fallback">✦</div>'}}}
 
 const ARX_PROFILE_CARD_PROMPTS=[
  'Una cosa que siempre consigue hacerme sonreír…','Mi escapada perfecta sería…','Ahora mismo no paro de escuchar…','Una buena primera cita para mí sería…','Mi plan improvisado favorito…','Un sitio al que volvería mil veces…','Mi viaje pendiente es…','Mi pequeño vicio es…','Una cosa que poca gente sabe de mí…','Mi domingo perfecto…','Tengo debilidad por…','Mi talento más inútil…','Una opinión por la que podría empezar un debate…','Me conquistas si…','Una green flag que valoro mucho…','Una cosa que me hace especialmente feliz…','Mi comida favorita es…','Si me dices “haz una maleta”, me voy a…','Mi lugar favorito para desconectar…','Una conversación que nunca me cansa…','Mi idea de química es…','Lo más random que me gusta…','Una cosa que quiero hacer este año…','Café antes de cualquier conversación ☕','No digo que no a una escapada al mar 🌊','Si empezamos hablando de esto, tenemos conversación para rato…','Soy de las que…','Un plan que nunca rechazo…','Mi película o serie refugio es…','Este año quiero aprender…'
