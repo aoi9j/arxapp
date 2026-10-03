@@ -81,7 +81,13 @@ window.arxSignup=async function(){
       return;
     }
     ok=true;
-    try{await X().auth.refreshSession()}catch(e){}
+    /* v104: la funcion cambia email+password del usuario anonimo; la sesion vieja puede quedar invalida.
+       Iniciamos sesion de nuevo con el codigo recien emitido para tener una sesion fiable. */
+    try{
+      const pc=String(issued.data.code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+      const si=await X().auth.signInWithPassword({email:pc.slice(0,6).toLowerCase()+'@'+DOM,password:pc.slice(6)});
+      if(si.error)console.error('ARX relogin:',si.error);
+    }catch(e){console.error('ARX relogin:',e)}
     showCode(issued.data.code);
   }catch(e){console.error('ARX NEW ACCOUNT:',e);showAuthError('No se pudo completar el registro. Inténtalo de nuevo.')}finally{
     if(btn)btn.disabled=false;
